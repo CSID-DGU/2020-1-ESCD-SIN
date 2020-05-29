@@ -44,6 +44,8 @@
     ```
     
 1. Go to `http://localhost:3000`
+
+---
 ## 3.API 서버
 ### 3.1 개발 환경
 * Python 3 
