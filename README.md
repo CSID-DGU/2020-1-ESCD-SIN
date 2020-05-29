@@ -34,7 +34,7 @@
     npm install --save
     ```
 
-1. Copy p5 folder to node_modules
+1. Copy p5 foler from modules to node_modules
 
 1. Run the application.
 
