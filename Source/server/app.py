@@ -485,6 +485,7 @@ def random_hangeul():
                 "귤","키위","수박","참외","파인애플","안녕하세요","반갑습니다",
                 "오징어","문어","책상","의자","기러기",
                 ]
+    randomText=["먹자","먹자","먹자","먹자","먹자"]
     textString = []
     for i in range (0,5):
         textString.append(randomText[rand.randint(0,len(randomText)-1)])

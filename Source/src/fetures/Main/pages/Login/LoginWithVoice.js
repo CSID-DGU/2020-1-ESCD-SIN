@@ -19,7 +19,11 @@ export default class LoginWithVoice extends Component {
     }
     handleCickChangeLv1 = () =>{
         const { id } =  this.state;
-        console.log(id)
+        if(!id)
+        {
+            alert("ID 입력해주세요");
+            return;
+        }
         Http.post({
             path: '/auth',
             payload: {
@@ -80,7 +84,8 @@ export default class LoginWithVoice extends Component {
                     const { data } = res;
                     if(data === "pass"){
                         this.setState({
-                            checkVoiceLv2 : true
+                            checkVoiceLv2 : true,
+                            checkLevel2: true
                         })
                     }else{
                         alert("단어가 음성 인식을 실패했습니다 다시 해주세요")

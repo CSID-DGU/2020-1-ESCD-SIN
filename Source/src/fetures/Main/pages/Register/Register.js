@@ -106,7 +106,7 @@ export default class Register extends Component {
         if(email && password && confirmPassword || true){
             Http.post({
                 path: '/enroll',
-                payload: {username: id, password: password, repassword: password}
+                payload: {username: "Huong", password: password, repassword: password}
             }).then((res) => {
                 const { data } = res;
                 if(data === 'pass'){
