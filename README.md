@@ -32,7 +32,7 @@
 1. Install all the required libraries Reactjs
 
     ```
-    npm install --save
+    npm install 
     ```
 
 1. Copy p5 folder from modules to node_modules
