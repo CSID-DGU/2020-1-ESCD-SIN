@@ -26,7 +26,7 @@
 1. Move into the project directory. 
 
     ```
-    cd 2020-1-ESCD-SIN/Code
+    cd 2020-1-ESCD-SIN/Source
     ```
 	
 1. Install all the required libraries Reactjs
