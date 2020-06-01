@@ -1,7 +1,23 @@
-import pymongo
-from pymongo import MongoClient
+import mysql.connector
 
-client = MongoClient("mongodb+srv://huong:huong@cluster0-cwvzs.mongodb.net/test?retryWrites=true&w=majority")
+def sql(querry, val):
+    # Open database connection
+    try: 
+        mydb = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            passwd="huong",
+            database="voice_db"
+        )
 
-db = client['voice_db']
-print(db)
+        # prepare a cursor object using cursor() method
+        mycursor = mydb.cursor()
+
+        # run querry
+        mycursor.execute(querry, val)
+
+        # commit database
+        mydb.commit()
+    except Exception as e: 
+        print("Database connection fail", e)
+

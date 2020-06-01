@@ -30,6 +30,7 @@ from flask_cors import CORS
 # Note: Is there a better way to do this?
 # This is the file where the credentials are stored
 import config
+import db
 
 speech_to_text = SpeechToTextV1(
     iam_apikey=config.APIKEY,
@@ -51,9 +52,9 @@ filename_wav = ""
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/home')
+@app.route('/test', methods=["GET", "POST"])
 def home():
-    return render_template('main.html')
+    return "Server testing..."
 
 
 # 음석을 인식을 먼저하기 위해서 아이디과 비밀번호를 입력해서 
@@ -68,13 +69,14 @@ def enroll():
 
         username = data['username']
         password = data['password']
-        repassword = data['repassword']
-        print(username, password, repassword)
+        email = data['email']
+        
         user_directory = "Users/" + username + "/"
 
         # 사용자는 이미 존재했으면 해당하는 User Overwriting ... 뭐라고해 야지
         if not os.path.exists(user_directory):
             os.makedirs(user_directory)
+            db.sql("INSERT INTO users (user_id, password, email) VALUES (%s, %s, %s)",(username, password, email))
             print("[ * ] Directory ", username,  " Created ...")
         else:
             print("[ * ] Directory ", username,  " already exists ...")
