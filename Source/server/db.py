@@ -1,13 +1,7 @@
-import psycopg2
+import pymongo
+from pymongo import MongoClient
 
-#connect to the db
-con = psycopg2.connect(
-    host="localhost",
-    database="postgres",
-    user="postgres",
-    password="huong",
-    port="5432"
-)
+client = MongoClient("mongodb+srv://huong:huong@cluster0-cwvzs.mongodb.net/test?retryWrites=true&w=majority")
 
-#close the connection
-con.close()
+db = client['voice_db']
+print(db)
