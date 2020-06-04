@@ -2,8 +2,8 @@
 # This is used to dump the models into an object
 import pickle
 import datetime
-import os                                               # For creating directories
-import shutil                                           # For deleting directories
+import os, random                                               # For creating directories
+import shutil       
 # from collections import defaultdict
 
 import matplotlib.pyplot as plt
@@ -25,8 +25,8 @@ from sklearn.mixture import GaussianMixture
 from watson_developer_cloud import SpeechToTextV1
 
 from flask_cors import CORS
-
-
+from Crypto.Cipher import AES
+from Crypto.Hash import SHA256
 # Note: Is there a better way to do this?
 # This is the file where the credentials are stored
 import config
@@ -38,6 +38,7 @@ speech_to_text = SpeechToTextV1(
 )
 
 from flask import Flask, render_template, request, jsonify, url_for, redirect, abort, session, json
+from numpy.compat import long
 
 PORT = 5000
 
@@ -57,8 +58,55 @@ def home():
     return "Server testing..."
 
 
-# 음석을 인식을 먼저하기 위해서 아이디과 비밀번호를 입력해서 
-# 여기서 사용자가 입력한 이름대로 파일을 생선한다.
+def encrypt(key, filename):
+        chunksize = 64 * 1024
+        outputFile = "(encrypted)" + filename
+        filesize = str(os.path.getsize(filename)).zfill(16)
+        IV = ''
+
+        for i in range(16):
+                IV += chr(random.randint(0, 0xFF))
+        encryptor = AES.new(key, AES.MODE_CBC, IV)
+    
+        with open(filename, 'rb') as infile:
+            with open(outputFile, 'wb') as outfile:
+                outfile.write(filesize)
+                outfile.write(IV)
+
+                while True:
+                        chunk = infile.read(chunksize)
+
+                        if len(chunk) == 0:
+                            break
+                        elif len(chunk) % 16 != 0:
+                            chunk += ' ' * (16 - (len(chunk) % 16))
+                        
+                        outfile.write(encryptor.encrypt(chunk))
+def decrypt(key, filename):
+        chunksize = 64 * 1024
+        outputFile = filename[11:]
+
+        with open(filename, 'rb') as infile: 
+            filesize = long(infile. read(16))
+            IV = infile.read(16)
+
+            decryptor = AES.new(key, AES.MODE_CBC, IV)
+
+            with open(outputFile, 'wb') as outfile:
+                while True:
+                    chunk = infile.read(chunksize)
+
+                    if len(chunk) == 0:
+                        break
+                    outfile.write(decryptor.decrypt(chunk))
+                outfile.truncate(filesize)
+def getKey(password):
+    hasher = SHA256.new(password)    
+    return hasher.digest()
+
+# 음석을 인식 기능을 클릭하는 시에 
+# 서버에서 해당하는 Id과 비밀번호를 받아서 저장한다
+# 전달되는 아이디를 중복하는 경우에는 어떻게?
 @app.route('/enroll', methods=["GET", "POST"])
 def enroll():
     global username
@@ -68,8 +116,9 @@ def enroll():
         data = request.get_json()
 
         username = data['username']
-        password = data['password']
         email = data['email']
+        password = data['password']
+        # email = data['email']
         
         user_directory = "Users/" + username + "/"
 
@@ -78,14 +127,15 @@ def enroll():
             os.makedirs(user_directory)
             db.sql("INSERT INTO users (user_id, password, email) VALUES (%s, %s, %s)",(username, password, email))
             print("[ * ] Directory ", username,  " Created ...")
+            return "created user"
         else:
-            print("[ * ] Directory ", username,  " already exists ...")
-            print("[ * ] Overwriting existing directory ...")
-            shutil.rmtree(user_directory, ignore_errors=False, onerror=None)
-            os.makedirs(user_directory)
-            print("[ * ] Directory ", username,  " Created ...")
+            # print("[ * ] Directory ", username,  " already exists ...")
+            # print("[ * ] Overwriting existing directory ...")
+            # shutil.rmtree(user_directory, ignore_errors=False, onerror=None)
+            # os.makedirs(user_directory)
+            # print("[ * ] Directory ", username,  " Created ...")
+            return "user already exists"
 
-        return "pass"
 
     else:
         return "fail"
