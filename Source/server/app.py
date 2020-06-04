@@ -5,7 +5,7 @@ import datetime
 import os, random                                               # For creating directories
 import shutil       
 # from collections import defaultdict
-
+import base64
 import matplotlib.pyplot as plt
 import numpy
 import scipy.cluster
@@ -27,10 +27,14 @@ from watson_developer_cloud import SpeechToTextV1
 from flask_cors import CORS
 from Crypto.Cipher import AES
 from Crypto.Hash import SHA256
+from Crypto import Random
 # Note: Is there a better way to do this?
 # This is the file where the credentials are stored
 import config
 import db
+
+from dotenv import load_dotenv
+load_dotenv()
 
 speech_to_text = SpeechToTextV1(
     iam_apikey=config.APIKEY,
@@ -62,32 +66,30 @@ def encrypt(key, filename):
         chunksize = 64 * 1024
         outputFile = "(encrypted)" + filename
         filesize = str(os.path.getsize(filename)).zfill(16)
-        IV = ''
+        IV = Random.new().read(16)
 
-        for i in range(16):
-                IV += chr(random.randint(0, 0xFF))
         encryptor = AES.new(key, AES.MODE_CBC, IV)
-    
+
         with open(filename, 'rb') as infile:
             with open(outputFile, 'wb') as outfile:
-                outfile.write(filesize)
+                outfile.write(filesize.encode('utf-8'))
                 outfile.write(IV)
-
+                
                 while True:
-                        chunk = infile.read(chunksize)
+                    chunk = infile.read(chunksize)
+                    
+                    if len(chunk) == 0:
+                        break
+                    elif len(chunk) % 16 != 0:
+                        chunk += b' ' * (16 - (len(chunk) % 16))
 
-                        if len(chunk) == 0:
-                            break
-                        elif len(chunk) % 16 != 0:
-                            chunk += ' ' * (16 - (len(chunk) % 16))
-                        
-                        outfile.write(encryptor.encrypt(chunk))
+                    outfile.write(encryptor.encrypt(chunk))
 def decrypt(key, filename):
-        chunksize = 64 * 1024
+        chunksize = 64*1024
         outputFile = filename[11:]
-
-        with open(filename, 'rb') as infile: 
-            filesize = long(infile. read(16))
+        
+        with open(filename, 'rb') as infile:
+            filesize = int(infile.read(16))
             IV = infile.read(16)
 
             decryptor = AES.new(key, AES.MODE_CBC, IV)
@@ -98,11 +100,12 @@ def decrypt(key, filename):
 
                     if len(chunk) == 0:
                         break
+
                     outfile.write(decryptor.decrypt(chunk))
                 outfile.truncate(filesize)
 def getKey(password):
-    hasher = SHA256.new(password)    
-    return hasher.digest()
+            hasher = SHA256.new(password.encode('utf-8'))
+            return hasher.digest()
 
 # 음석을 인식 기능을 클릭하는 시에 
 # 서버에서 해당하는 Id과 비밀번호를 받아서 저장한다
@@ -117,15 +120,21 @@ def enroll():
 
         username = data['username']
         email = data['email']
-        password = data['password']
-        # email = data['email']
+        password = data['password'] 
+
+        # 해당하는 User에서 username 기준으로 비밀번호 암호화
+        cipher = AES.new(os.getenv("PASSWORD_ECD").encode('utf-8'),AES.MODE_ECB) # never use ECB in strong systems obviously
+        encoded_password = base64.b64encode(cipher.encrypt(password.encode('utf-8').rjust(32)))
         
-        user_directory = "Users/" + username + "/"
+        # 서버에서 파일 경로를 암호화
+        encoded_path = base64.b64encode(cipher.encrypt(username.encode('utf-8').rjust(32))).decode('utf-8')
+        print(encoded_path)
+        user_directory = "Users/" + encoded_path + "/"
 
         # 사용자는 이미 존재했으면 해당하는 User Overwriting ... 뭐라고해 야지
         if not os.path.exists(user_directory):
             os.makedirs(user_directory)
-            db.sql("INSERT INTO users (user_id, password, email) VALUES (%s, %s, %s)",(username, password, email))
+            db.sql("INSERT INTO users (user_id, password, email, path) VALUES (%s, %s, %s)",(username, encoded_password, email, encoded_path))
             print("[ * ] Directory ", username,  " Created ...")
             return "created user"
         else:

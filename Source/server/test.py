@@ -3,6 +3,7 @@ from Crypto.Cipher import AES
 from Crypto.Hash import SHA256
 from Crypto import Random
 from click._compat import raw_input
+import base64
 
 def encrypt(key, filename):
         chunksize = 64 * 1024
@@ -50,20 +51,28 @@ def getKey(password):
             return hasher.digest()
 
 def Main():
-    choice = raw_input("Would you like to (E)ncrypt or (D)ecrypt?: ")
+    # choice = raw_input("Would you like to (E)ncrypt or (D)ecrypt?: ")
 
-    if choice == 'E':
-        filename = raw_input("File to encrypt: ")
-        password = raw_input("Password: ")
-        encrypt(getKey(password), filename)
-        print ("Done.")
-    elif choice == 'D':
-        filename = raw_input("File to decrypt: ")
-        password = raw_input("Password: ")
-        decrypt(getKey(password), filename)
-        print ("Done.")
-    else:
-        print ("No Option selected, closing...")
+    # if choice == 'E':
+    #     filename = raw_input("File to encrypt: ")
+    #     password = raw_input("Password: ")
+    #     encrypt(getKey(password), filename)
+    #     print ("Done.")
+    # elif choice == 'D':
+    #     filename = raw_input("File to decrypt: ")
+    #     password = raw_input("Password: ")
+    #     decrypt(getKey(password), filename)
+    #     print ("Done.")
+    # else:
+    #     print ("No Option selected, closing...")
+    msg_text = b'Dongguk'.rjust(32)
+    secret_key = b'Sixteen byte key'
+
+    cipher = AES.new(secret_key,AES.MODE_ECB) # never use ECB in strong systems obviously
+    encoded = base64.b64encode(cipher.encrypt(msg_text))
+    print(encoded)
+    decoded = cipher.decrypt(base64.b64decode(encoded))
+    print(decoded)
 
 if __name__ == '__main__':
 	Main()
