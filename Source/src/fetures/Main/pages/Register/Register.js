@@ -34,8 +34,7 @@ export default class Register extends Component {
         console.log(this.state)
     }
     hanleChangeVoice = (blob) => {
-        const { checkNoiseLv1, email, password, confirmPassword } = this.state;
-
+        const { checkNoiseLv1, id, email, password, confirmPassword } = this.state;
         //먼저를 환경의 노이즈를  API를 보내서 5개 단어를 다시 받음
         if(!checkNoiseLv1) //Noise check 
         {
@@ -103,16 +102,23 @@ export default class Register extends Component {
     }
     getWordsforVoice = (value) =>{
         const { id, email, password, confirmPassword } = this.state;
-        if(email && password && confirmPassword || true){
+        console.log( id, email, password, confirmPassword)
+        if(id && email && password && confirmPassword){
+            if(password !== confirmPassword){
+                alert("입력된 비밀번호를 확인 해주세요")
+                return;
+            }
             Http.post({
                 path: '/enroll',
-                payload: {username: "Huong", password: password, repassword: password}
+                payload: {username: id, email: email,  password: password}
             }).then((res) => {
                 const { data } = res;
-                if(data === 'pass'){
+                if(data === 'created user'){
                     this.setState({
                             checkVoice: !value,
                     })
+                }else{
+                    alert("사용자 이미 존재합니다. 다시 입력해주세요")
                 }
             }).catch((err) => {
                 console.log(err)
@@ -124,7 +130,6 @@ export default class Register extends Component {
     render() {
         const { checkVoice, id, email, password, confirmPassword, words,checkNoiseLv1, checkVoiceLv2} = this.state;
         if(checkNoiseLv1 && !checkVoiceLv2){
-            console.log("aaa")
         }
         return (
             <div className="container-fluid">
@@ -147,6 +152,12 @@ export default class Register extends Component {
                             <div className="form-group">
                                 <label for="id">Confirm Password</label>
                                 <input type="password" name="confirmPassword" id="id" onChange= {this.handleCheck} className="form-control" placeholder="Password..." value= {confirmPassword}/>
+                                {
+                                    confirmPassword &&
+                                        password !== confirmPassword ?
+                                            <p style={{color: "red"}}>비밀번호 동일하지 않습니다</p>
+                                        : ""
+                                }
                             </div>
                             <div className="form-group">
                                 <label for="id">Voice Authentication</label>
@@ -172,7 +183,7 @@ export default class Register extends Component {
                                     <>
                                         {
                                             !checkNoiseLv1 && 
-                                            "Check noise round 1"
+                                            "노이즈 체그 단계입니다"
                                         }
                                         <WaveSurferContainer
                                             hanleChangeVoice = {this.hanleChangeVoice}

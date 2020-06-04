@@ -41,6 +41,7 @@ speech_to_text = SpeechToTextV1(
     url=config.URL
 )
 
+import re
 from flask import Flask, render_template, request, jsonify, url_for, redirect, abort, session, json
 from numpy.compat import long
 
@@ -64,7 +65,8 @@ def home():
 
 def encrypt(key, filename):
         chunksize = 64 * 1024
-        outputFile = "(encrypted)" + filename
+        temp_filename = filename.split("/")
+        outputFile = temp_filename[0] + "/" + temp_filename[1] + "/encode" + temp_filename[2]
         filesize = str(os.path.getsize(filename)).zfill(16)
         IV = Random.new().read(16)
 
@@ -77,17 +79,16 @@ def encrypt(key, filename):
                 
                 while True:
                     chunk = infile.read(chunksize)
-                    
                     if len(chunk) == 0:
                         break
                     elif len(chunk) % 16 != 0:
                         chunk += b' ' * (16 - (len(chunk) % 16))
-
                     outfile.write(encryptor.encrypt(chunk))
+
 def decrypt(key, filename):
         chunksize = 64*1024
-        outputFile = filename[11:]
-        
+        temp_filename = filename.split("/")
+        outputFile = temp_filename[0] + "/" + temp_filename[1] +  "/decode" + temp_filename[2].replace('encode',"")
         with open(filename, 'rb') as infile:
             filesize = int(infile.read(16))
             IV = infile.read(16)
@@ -97,16 +98,18 @@ def decrypt(key, filename):
             with open(outputFile, 'wb') as outfile:
                 while True:
                     chunk = infile.read(chunksize)
-
                     if len(chunk) == 0:
                         break
-
                     outfile.write(decryptor.decrypt(chunk))
                 outfile.truncate(filesize)
-def getKey(password):
-            hasher = SHA256.new(password.encode('utf-8'))
-            return hasher.digest()
 
+def getKey(password):
+    hasher = SHA256.new(password.encode('utf-8'))
+    return hasher.digest()
+
+def removeSpecialChars(str):
+    result = re.sub('[^a-zA-Z0-9 \n\.]', '', str)
+    return result
 # 음석을 인식 기능을 클릭하는 시에 
 # 서버에서 해당하는 Id과 비밀번호를 받아서 저장한다
 # 전달되는 아이디를 중복하는 경우에는 어떻게?
@@ -126,16 +129,18 @@ def enroll():
         cipher = AES.new(os.getenv("PASSWORD_ECD").encode('utf-8'),AES.MODE_ECB) # never use ECB in strong systems obviously
         encoded_password = base64.b64encode(cipher.encrypt(password.encode('utf-8').rjust(32)))
         
-        # 서버에서 파일 경로를 암호화
+        # 서버에서 파일을 저장하는 경로를 암호화
         encoded_path = base64.b64encode(cipher.encrypt(username.encode('utf-8').rjust(32))).decode('utf-8')
-        print(encoded_path)
-        user_directory = "Users/" + encoded_path + "/"
+        user_path = removeSpecialChars(encoded_path)
+    
+        user_directory = "Users/" + user_path + "/"
 
         # 사용자는 이미 존재했으면 해당하는 User Overwriting ... 뭐라고해 야지
         if not os.path.exists(user_directory):
             os.makedirs(user_directory)
-            db.sql("INSERT INTO users (user_id, password, email, path) VALUES (%s, %s, %s)",(username, encoded_password, email, encoded_path))
+            db.sql("INSERT INTO users (user_id, password, email, path) VALUES (%s, %s, %s, %s)",(username, encoded_password, email, user_path))
             print("[ * ] Directory ", username,  " Created ...")
+            print("User path file", user_path)
             return "created user"
         else:
             # print("[ * ] Directory ", username,  " already exists ...")
@@ -235,7 +240,7 @@ def vad():
         print("randoms global", random_words)
         return " ".join(random_words)
     else:
-        # 이거 뭐죠?
+        # !! 안씀
         background_noise = speech_recognition.AudioFile(
             './static/audio/background_noise.wav')
         with background_noise as source:
@@ -264,44 +269,52 @@ def voice():
         global random_words
         global username
 
-        # 보내는 파일 저장함
+        # 읽어는 단어
         result = request.form.to_dict(flat=False)
         words = json.loads(result["words"][0])
         print(words)
 
-        print("file send state: ", request.files['file'])
-        filename_wav = user_directory + username + '.wav'
-        f = open(filename_wav, 'wb')
+
+        #보내는 파일 저장함
+        filename_wav = user_directory + username + '.wav' # 파일 경로
+        f = open(filename_wav, 'wb') # 보내는 파일 저장한
         f.write(request.files['file'].read())
         f.close()
 
-
+        # 파일 암호화해서 다시 저장함
+        print(filename_wav)
+        if os.path.exists(filename_wav):
+            encrypt(getKey(os.getenv("PASSWORD_ECD")), filename_wav)
         # 파일 읽어옴
         # with open(filename_wav, 'rb') as audio_file:
         #     recognised_words = speech_to_text.recognize(audio_file, content_type='audio/wav').get_result()
-        naver_words = naver_STT(filename_wav)
-        print("Naver Sppeech to Text thinks you said: " + " ".join(naver_words) + "\n")
+        try:
+            # code block
+            naver_words = naver_STT(filename_wav)
+            print("Naver Sppeech to Text thinks you said: " + " ".join(naver_words) + "\n")
 
-        #recognised_words = str(recognised_words['results'][0]['alternatives'][0]['transcript'])
+            #recognised_words = str(recognised_words['results'][0]['alternatives'][0]['transcript'])
 
-        #print("IBM Speech to Text thinks you said : " + recognised_words)
-        #print("IBM Fuzzy partial score : " + str(fuzz.partial_ratio(words, recognised_words)))
-        #print("IBM Fuzzy score : " + str(fuzz.ratio(words, recognised_words)))       
+            #print("IBM Speech to Text thinks you said : " + recognised_words)
+            #print("IBM Fuzzy partial score : " + str(fuzz.partial_ratio(words, recognised_words)))
+            #print("IBM Fuzzy score : " + str(fuzz.ratio(words, recognised_words)))       
 
-        google_words = run_quickstart(filename_wav)
-        print("Google Sppeech to Text thinks you said: " + " ".join(google_words) + "\n")
+            # google_words = run_quickstart(filename_wav)
+            # print("Google Sppeech to Text thinks you said: " + " ".join(google_words) + "\n")
 
-        # 단어를 5개를 말해서 음석을 받아서 체크함
-        # 만약에 5개를 맞게 말하면 pass 또한 5개를 인식을 못하는거나 정확성을 낮지 않으면  ㅋㅋㅋ 
+            # 단어를 5개를 말해서 음석을 받아서 체크함
+            # 만약에 5개를 맞게 말하면 pass 또한 5개를 인식을 못하는거나 정확성을 낮지 않으면  ㅋㅋㅋ 
 
-        total_words = naver_words + google_words
+            # total_words = naver_words + google_words
 
-        if(checkList(words, total_words)) : 
-            return "pass"
-        else :
-            print("\nThe words you have spoken aren't entirely correct. Please try again ...")
-            os.remove(filename_wav)
-            return "fail"
+            if(checkList(words, naver_words)) : 
+                return "pass"
+            else :
+                print("\nThe words you have spoken aren't entirely correct. Please try again ...")
+                os.remove(filename_wav)
+                return "fail"
+        except ValueError as Error:
+            print(Error)
 
         # if fuzz.ratio(words, recognised_words) < 65:
         #     print(
@@ -320,6 +333,7 @@ def voice():
 @app.route('/biometrics', methods=['GET', 'POST'])
 def biometrics():
     global user_directory
+    global username
     print("[ DEBUG ] : User directory is : ", user_directory)
 
     if request.method == 'POST':
@@ -335,8 +349,8 @@ def biometrics():
         # 저장되어 있는 wav 파일 사용자의 이름 맞게를 출력함
         for file in os.listdir(directory):
             filename_wav = os.fsdecode(file)
-            if filename_wav.endswith(".wav"):
-                print("[biometrics] : Reading audio files for processing ...")
+            if filename_wav.startswith(username):
+                print("[biometrics] : Reading audio files for processing ...",user_directory + filename_wav)
                 (rate, signal) = scipy.io.wavfile.read(user_directory + filename_wav)
 
                 extracted_features = extract_features(rate, signal)
