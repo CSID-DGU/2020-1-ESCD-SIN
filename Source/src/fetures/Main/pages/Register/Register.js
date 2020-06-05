@@ -31,7 +31,8 @@ export default class Register extends Component {
         })
     }
     subMit = () =>{
-        console.log(this.state)
+        alert("로그인 성공했습니다");
+        this.props.history.push('/')
     }
     hanleChangeVoice = (blob) => {
         const { checkNoiseLv1, id, email, password, confirmPassword } = this.state;
@@ -57,7 +58,6 @@ export default class Register extends Component {
                 console.log(err)
             })
         }else{
-            
             const { checkVoiceLv2 } = this.state;
             if(!checkVoiceLv2)
             {
@@ -101,8 +101,7 @@ export default class Register extends Component {
         }
     }
     getWordsforVoice = (value) =>{
-        const { id, email, password, confirmPassword } = this.state;
-        console.log( id, email, password, confirmPassword)
+        const { id, email, password, confirmPassword, checkVoice } = this.state;
         if(id && email && password && confirmPassword){
             if(password !== confirmPassword){
                 alert("입력된 비밀번호를 확인 해주세요")

@@ -104,6 +104,7 @@ export default class LoginWithVoice extends Component {
                         alert("음석 인식 인증 기능을 확인했습니다.")
                         handleCheckSuccess(true);
                     }else{
+                        alert("사용자 인식 실패합니다.")
                         handleCheckSuccess(false);
                     }
                 }).catch((err) => {
