@@ -63,10 +63,14 @@ def home():
     return "Server testing..."
 
 
+# 파일 암하화
 def encrypt(key, filename):
         chunksize = 64 * 1024
         temp_filename = filename.split("/")
-        outputFile = temp_filename[0] + "/" + temp_filename[1] + "/encode" + temp_filename[2]
+        if(len(temp_filename) == 2):
+            outputFile = temp_filename[0] + "/encode" + temp_filename[1]
+        else:
+            outputFile = temp_filename[0] + "/" + temp_filename[1] + "/encode" + temp_filename[2]
         filesize = str(os.path.getsize(filename)).zfill(16)
         IV = Random.new().read(16)
 
@@ -84,11 +88,15 @@ def encrypt(key, filename):
                     elif len(chunk) % 16 != 0:
                         chunk += b' ' * (16 - (len(chunk) % 16))
                     outfile.write(encryptor.encrypt(chunk))
-
+# 파일 비암호화
 def decrypt(key, filename):
         chunksize = 64*1024
         temp_filename = filename.split("/")
-        outputFile = temp_filename[0] + "/" + temp_filename[1] +  "/decode" + temp_filename[2].replace('encode',"")
+        if(len(temp_filename) == 2):
+            outputFile = temp_filename[0] + "/decode" + temp_filename[1].replace('encode',"")
+        else:
+            outputFile = temp_filename[0] + "/" + temp_filename[1] +  "/decode" + temp_filename[2].replace('encode',"")
+
         with open(filename, 'rb') as infile:
             filesize = int(infile.read(16))
             IV = infile.read(16)
@@ -110,6 +118,7 @@ def getKey(password):
 def removeSpecialChars(str):
     result = re.sub('[^a-zA-Z0-9 \n\.]', '', str)
     return result
+
 # 음석을 인식 기능을 클릭하는 시에 
 # 서버에서 해당하는 Id과 비밀번호를 받아서 저장한다
 # 전달되는 아이디를 중복하는 경우에는 어떻게?
@@ -184,33 +193,6 @@ def auth():
             print("[ * ] The user profile exists ...")
             return "User exist"
 
-
-        # Encode file name
-        # print("os.fsencode(user_directory : ", os.fsencode(userGmm))
-        # directory = os.fsencode(userGmm)
-
-        # # 해당하는 경로를 열어서 파일 리스트를 골람
-        # print("directory : ", os.listdir(directory)[1:])
-
-        # # 보낸 User과 이미 저장되어 있는 파일의 이름을 출력하여 비교한 다음에 만약에 있으면 OK
-        
-        # for file in os.listdir(directory):
-        #     print("file : ", file)
-        #     filename = os.fsdecode(file)
-        #     if filename.startswith(username):
-        #         print("filename : ", filename)
-        #         user_exist = True
-        #         break
-        #     else:
-        #         pass
-
-        # # 사용자는 존재하면 Go go
-        # if user_exist:
-        #     print("[ * ] The user profile exists ...")
-        #     return "User exist"
-        # else:
-        #     print("[ * ] The user profile does not exists ...")
-        #     return "Doesn't exist"
     else:
         print('its coming here')
 
@@ -219,11 +201,8 @@ def auth():
 @app.route('/vad', methods=['GET', 'POST'])
 def vad():
     if request.method == 'POST':
-        # global random_words #randoms words를 저장하는 변수
-        # 파일을 열어 주라
         f = open('./static/audio/background_noise.wav', 'wb') # 쓰기만
 
-        print("data", request.files['file'])
         # client 보내주는 blob 파일 저장해줘
         f.write(request.files['file'].read())
         f.close()
@@ -288,7 +267,6 @@ def voice():
         f.close()
 
         
-        # 파일 암호화해서 다시 저장함
         print(filename_wav)
         if os.path.exists(filename_wav):
             encrypt(getKey(os.getenv("PASSWORD_ECD")), filename_wav)
@@ -323,16 +301,6 @@ def voice():
                 return "fail"
         except ValueError as Error:
             print(Error)
-
-        # if fuzz.ratio(words, recognised_words) < 65:
-        #     print(
-        #         "\nThe words you have spoken aren't entirely correct. Please try again ...")
-        #     os.remove(filename_wav)
-        #     return "fail"
-        # else:
-        #     pass
-        # return "pass" #음석 성공했네요 ㅋㅋㅋ 축가합니다
-
     else:
         return "Oh no no"
 
@@ -391,14 +359,27 @@ def biometrics():
         print("[ * ] Object has been successfully written to Models/" +
             username + ".gmm ...")
             
-        db.sql("UPDATE users SET pathgmm = %s WHERE user_id = %s",(username + ".gmm", username))
-        print("\n\n[ * ] User has been successfully enrolled ...")
 
         features = numpy.asarray(())
 
+        # 파일 이름 암호화
+        cipher = AES.new(os.getenv("GMM_ECD").encode('utf-8'),AES.MODE_ECB) # never use ECB in strong systems obviously
+        encoded_path = base64.b64encode(cipher.encrypt(username.encode('utf-8').rjust(32))).decode('utf-8')
+        user_gmm_path = removeSpecialChars(encoded_path)
+
+
+        try:
+            # 파일을 암호화해서 이름을 바뀜
+            # encrypt(getKey(os.getenv("GMM_ECD")),"Models/" + str(username) + ".gmm")
+            os.rename("Models/" + str(username) + ".gmm","Models/" + str(user_gmm_path) + ".gmm") 
+
+            db.sql("UPDATE users SET pathgmm = %s WHERE user_id = %s",(user_gmm_path + ".gmm", username))
+            print("\n\n[ * ] User has been successfully enrolled ...")
+        except ValueError as Error:
+            return ("Encode GMM error", Error)
         return "User has been successfully enrolled ...!!"
 
-# 다음부터 사용자를 인증합니다. #!비밀번호 체크해야 함
+# 다음부터 사용자를 인증합니다.
 @app.route("/verify", methods=['GET'])
 def verify():
     global username
@@ -407,9 +388,9 @@ def verify():
     global filename_wav
 
     print("[ DEBUG ] : user directory : " , user_directory)
-    print("[ DEBUG ] : filename : " , filename)
     print("[ DEBUG ] : filename_wav : " , filename_wav)
-
+    decrypt(getKey(os.getenv("PASSWORD_ECD")), user_directory + "encode" + username + ".wav")
+    filename_wav = user_directory + "decode" + username + ".wav"
     # ------------------------------------------------------------------------------------------------------------------------------------#
     #                                                                LTSD and MFCC                                                     #
     # ------------------------------------------------------------------------------------------------------------------------------------#
@@ -423,17 +404,27 @@ def verify():
     #                                                          Loading the Gaussian Models                                                #
     # ------------------------------------------------------------------------------------------------------------------------------------#
 
-    gmm_models = [os.path.join(user_directory, user)
-                for user in os.listdir(user_directory)
-                if user.endswith('.gmm')]
+    cipher = AES.new(os.getenv("GMM_ECD").encode('utf-8'),AES.MODE_ECB) # never use ECB in strong systems obviously
+    encoded_path = base64.b64encode(cipher.encrypt(username.encode('utf-8').rjust(32))).decode('utf-8')
+    user_gmm_path = removeSpecialChars(encoded_path)
 
-    # print("GMM Models : " + str(gmm_models))
+
+    gmm_models = [os.path.join('Models/', user)
+                for user in os.listdir('Models/')
+                if user.endswith('.gmm')]
+                
+    # decrypt(getKey(os.getenv("PASSWORD_ECD")), gmm_models)
+    # gmm 리스트 파일 노드
+    print("Load with GMM file: " + str(gmm_models))
+    
+    print("GMM Models : " + str(gmm_models))
 
     # Load the Gaussian user Models
     models = [pickle.load(open(user, 'rb')) for user in gmm_models]
 
     user_list = [user.split("/")[-1].split(".gmm")[0]
                 for user in gmm_models]
+    print("User List"+str(user_list))
 
     log_likelihood = numpy.zeros(len(models))
 
@@ -571,7 +562,7 @@ def random_hangeul():
                 "귤","키위","수박","참외","파인애플","안녕하세요","반갑습니다",
                 "오징어","문어","책상","의자","기러기",
                 ]
-    randomText=["먹자","먹자","먹자","먹자","먹자"]
+    randomText=["모자","모자","모자","모자","모자"]
     textString = []
     for i in range (0,5):
         textString.append(randomText[rand.randint(0,len(randomText)-1)])

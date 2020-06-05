@@ -28,7 +28,7 @@ def encrypt(key, filename):
                     elif len(chunk) % 16 != 0:
                         chunk += b' ' * (16 - (len(chunk) % 16))
                     outfile.write(encryptor.encrypt(chunk))
-                    
+
 def decrypt(key, filename):
         chunksize = 64*1024
         temp_filename = filename.split("/")
@@ -65,8 +65,6 @@ def Main():
         print ("Done.",getKey(os.getenv("PASSWORD_ECD")))
     else:
         print ("No Option selected, closing...")
-
-
 
 if __name__ == '__main__':
 	Main()
