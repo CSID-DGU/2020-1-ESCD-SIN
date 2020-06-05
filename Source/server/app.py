@@ -138,7 +138,7 @@ def enroll():
         # 사용자는 이미 존재했으면 해당하는 User Overwriting ... 뭐라고해 야지
         if not os.path.exists(user_directory):
             os.makedirs(user_directory)
-            db.sql("INSERT INTO users (user_id, password, email, path) VALUES (%s, %s, %s, %s)",(username, encoded_password, email, user_path))
+            db.sql("INSERT INTO users (user_id, password, email, pathvoice) VALUES (%s, %s, %s, %s)",(username, encoded_password, email, user_path))
             print("[ * ] Directory ", username,  " Created ...")
             print("User path file", user_path)
             return "created user"
@@ -154,7 +154,7 @@ def enroll():
     else:
         return "fail"
 
-# 인증 API 
+# 아아디 체크함
 @app.route('/auth', methods=['POST', 'GET'])
 def auth():
     global username
@@ -165,46 +165,52 @@ def auth():
 
     if request.method == 'POST':
 
-        data = request.get_json()
-        print(data)
-
         # Clien부터 보낸 username과 password를 받아
+        data = request.get_json()
+
         # Model 저장하는 경로
-        user_directory = 'Models/'
+        # user_directory = 'Models/wav/'
         username = data['username']
-        print("username", username)
-        # password = data['password']
+        user = db.sqlSelect("SELECT * FROM users where user_id = %s",(username))
 
-        print("[ DEBUG ] : What is the user directory at auth : ", user_directory)
 
-        # Encode file name
-        print("os.fsencode(user_directory : ", os.fsencode(user_directory))
-        directory = os.fsencode(user_directory)
-
-        # 해당하는 경로를 열어서 파일 리스트를 골람
-        print("directory : ", os.listdir(directory)[1:])
-
-        # 보낸 User과 이미 저장되어 있는 파일의 이름을 출력하여 비교한 다음에 만약에 있으면 OK
-        for file in os.listdir(directory):
-            print("file : ", file)
-            filename = os.fsdecode(file)
-            if filename.startswith(username):
-                print("filename : ", filename)
-                user_exist = True
-                break
-            else:
-                pass
-
-        # 사용자는 존재하면 Go go
-        if user_exist:
+        if(len(user) == 0):
+            print("[ * ] The user profile does not exists ...")
+            return "Doesn't exist"
+        else :
+            print(type(user[0]))
+            user_directory = 'Users/' + user[0][5] + '/' 
+            print("[ DEBUG ] : What is the user directory at auth : ", user_directory)
             print("[ * ] The user profile exists ...")
             return "User exist"
 
-        else:
-            print("[ * ] The user profile does not exists ...")
-            return "Doesn't exist"
-    
-    # 이 for문 꼭 필요하는가?
+
+        # Encode file name
+        # print("os.fsencode(user_directory : ", os.fsencode(userGmm))
+        # directory = os.fsencode(userGmm)
+
+        # # 해당하는 경로를 열어서 파일 리스트를 골람
+        # print("directory : ", os.listdir(directory)[1:])
+
+        # # 보낸 User과 이미 저장되어 있는 파일의 이름을 출력하여 비교한 다음에 만약에 있으면 OK
+        
+        # for file in os.listdir(directory):
+        #     print("file : ", file)
+        #     filename = os.fsdecode(file)
+        #     if filename.startswith(username):
+        #         print("filename : ", filename)
+        #         user_exist = True
+        #         break
+        #     else:
+        #         pass
+
+        # # 사용자는 존재하면 Go go
+        # if user_exist:
+        #     print("[ * ] The user profile exists ...")
+        #     return "User exist"
+        # else:
+        #     print("[ * ] The user profile does not exists ...")
+        #     return "Doesn't exist"
     else:
         print('its coming here')
 
@@ -281,6 +287,7 @@ def voice():
         f.write(request.files['file'].read())
         f.close()
 
+        
         # 파일 암호화해서 다시 저장함
         print(filename_wav)
         if os.path.exists(filename_wav):
@@ -308,6 +315,7 @@ def voice():
             # total_words = naver_words + google_words
 
             if(checkList(words, naver_words)) : 
+                os.remove(filename_wav)
                 return "pass"
             else :
                 print("\nThe words you have spoken aren't entirely correct. Please try again ...")
@@ -349,10 +357,11 @@ def biometrics():
         # 저장되어 있는 wav 파일 사용자의 이름 맞게를 출력함
         for file in os.listdir(directory):
             filename_wav = os.fsdecode(file)
-            if filename_wav.startswith(username):
+            if filename_wav.endswith(".wav"):
+                decrypt(getKey(os.getenv("PASSWORD_ECD")), user_directory + filename_wav)
+                filename_wav = "decode" + username + ".wav"
                 print("[biometrics] : Reading audio files for processing ...",user_directory + filename_wav)
                 (rate, signal) = scipy.io.wavfile.read(user_directory + filename_wav)
-
                 extracted_features = extract_features(rate, signal)
 
                 if features.size == 0:
@@ -381,6 +390,8 @@ def biometrics():
         pickle.dump(gmm, open("Models/" + str(username) + ".gmm", "wb"), protocol=None)
         print("[ * ] Object has been successfully written to Models/" +
             username + ".gmm ...")
+            
+        db.sql("UPDATE users SET pathgmm = %s WHERE user_id = %s",(username + ".gmm", username))
         print("\n\n[ * ] User has been successfully enrolled ...")
 
         features = numpy.asarray(())
