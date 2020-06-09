@@ -65,7 +65,6 @@ class WaveSurferContainer extends React.Component {
                 this.mic.stop();
                 this.recorder.stop();
             } catch (error) {
-                // alert(error)
                 alert('Micro 연결 오류 발생합니다. 다시 새로 고침됩니다.')
                 window.location.reload();
                 console.log(error)

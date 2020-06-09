@@ -20,8 +20,9 @@ export default class Register extends Component {
             blob: {},
             words: [],
             
-            checkNoiseLv1: false,
-            checkVoiceLv2: false,
+            checkNoise: false,
+            checkWordVoice: false,
+            finishVoice: false
         }
     }
     handleCheck = ( event ) => {
@@ -31,7 +32,7 @@ export default class Register extends Component {
         })
     }
     subMit = () =>{
-        const { checkVoice } = this.state;
+        const { checkVoice, finishVoice } = this.state;
         if(!checkVoice){ //음성 없이 회원가입
             const {id, email, password, confirmPassword} = this.state;
             if(id && email && password && confirmPassword){
@@ -53,35 +54,64 @@ export default class Register extends Component {
                 alert("빈 값을 입력헀습니다. 다시 확인해주세요")
             }
         }else{
-            alert("회원가입 성곡했습니다")
+            if(finishVoice){
+                alert("회원가입 성곡했습니다")
+            }else{
+                alert("음성 정보를 각 단계를 먼저 진행해주세요")
+            }
+
         }
         // this.props.history.push('/')
     }
     hanleChangeVoice = (blob) => {
-        const { checkNoiseLv1, id, email, password, confirmPassword } = this.state;
-        //먼저를 환경의 노이즈를  API를 보내서 5개 단어를 다시 받음
-        if(!checkNoiseLv1) //Noise check 
+        const { checkNoise, checkWordVoice, id, email, password, confirmPassword, checkVoiceLv2 } = this.state;
+        //처음에는 CheckNoise 함수를 들어감
+        if(!checkNoise)
         {
-            const data = new FormData();
-            data.append('file',blob)
-            Http.post({
-                path: '/vad',
-                headers: {
-                    'Content-Type': `multipart/form-data`,
-                },
-                payload: data
-            }).then((res) => {
-                const { data } = res;
-                const words = data.split(" ");
-                this.setState({
-                    words,
-                    checkNoiseLv1: true
-                })
-            }).catch((err) => {
-                console.log(err)
-            })
+            if(id && email && password && confirmPassword){
+                if(password !== confirmPassword){
+                    alert("입력된 비밀번호를 확인 해주세요")
+                    return;
+                }
+                //입력한 정보를 각 User 저장할 파일을 경로를 만듦
+                Http.post({
+                    path: '/enroll',
+                    payload: {username: id, email: email,  password: password}
+                }).then((res) => {
+                    const { data } = res;
+                    if(data === 'created user'){
+                        
+                        //입력한 사용자를 만들고 나서 Noise파일을 보내고
+                        const data = new FormData();
+                        data.append('file',blob)
+                        Http.post({
+                            path: '/vad',
+                            headers: {
+                                'Content-Type': `multipart/form-data`,
+                            },
+                            payload: data
+                        }).then((res) => {
+                            const { data } = res;
+                            const words = data.split(" ");
+                            this.setState({
+                                words,
+                                checkNoise: !checkNoise,
+                                checkWordVoice: !checkWordVoice
+                            })
+                        }).catch((err) => {
+                            console.log(err)
+                        })
+                    }else{
+                        alert("사용자 이미 존재합니다. 다시 입력해주세요")
+                    }
+                }).catch((err) => {
+                    console.log(err)
+                })   
+            }else{
+                alert("음석 인식을 하기 위해서 먼저 위에 정보를 입력해주세요");
+            }
+            return;
         }else{
-            const { checkVoiceLv2 } = this.state;
             if(!checkVoiceLv2)
             {
                 //노이즈 체크한 단계를 넘어서 단어를 5개를 받아서 2간계를 넘
@@ -100,7 +130,8 @@ export default class Register extends Component {
                     const { data } = res;
                     if(data === "pass"){
                         this.setState({
-                            checkVoiceLv2 : true
+                            checkVoiceLv2 : true,
+                            finishVoice: !this.state.finishVoice
                         })
                     }else{
                         alert("단어가 음성 인식을 실패했습니다 다시 해주세요")
@@ -123,36 +154,8 @@ export default class Register extends Component {
             }
         }
     }
-    getWordsforVoice = (value) =>{
-        const { id, email, password, confirmPassword, checkVoice } = this.state;
-        if(id && email && password && confirmPassword){
-            if(password !== confirmPassword){
-                alert("입력된 비밀번호를 확인 해주세요")
-                return;
-            }
-            Http.post({
-                path: '/enroll',
-                payload: {username: id, email: email,  password: password}
-            }).then((res) => {
-                const { data } = res;
-                if(data === 'created user'){
-                    this.setState({
-                            checkVoice: !value,
-                    })
-                }else{
-                    alert("사용자 이미 존재합니다. 다시 입력해주세요")
-                }
-            }).catch((err) => {
-                console.log(err)
-            })   
-        }else{
-            alert("음석 인식을 하기 위해서 먼저 위에 정보를 입력해주세요");
-        }
-    }
     render() {
-        const { checkVoice, id, email, password, confirmPassword, words,checkNoiseLv1, checkVoiceLv2} = this.state;
-        if(checkNoiseLv1 && !checkVoiceLv2){
-        }
+        const { checkVoice, id, email, password, confirmPassword, words,checkWordVoice, checkNoise, finishVoice} = this.state;
         return (
             <div className="container-fluid">
                 <div className="row justify-content-center">
@@ -185,13 +188,15 @@ export default class Register extends Component {
                                 <label for="id">Voice Authentication</label>
                                 <div className = "checkVoice">
                                     <ToggleButton
-                                        value={ this.state.checkVoice || false }
+                                        value={this.state.checkVoice || false}
                                             onToggle={(value) => {
-                                            this.getWordsforVoice(value);
+                                            this.setState({
+                                                checkVoice: !value,
+                                            })
                                     }} />
                                 </div>
                                 {
-                                    checkNoiseLv1 && 
+                                    checkWordVoice && 
                                         <p style = {{textAlign: "center"}}>
                                             {
                                                 words.map(item => (
@@ -204,14 +209,14 @@ export default class Register extends Component {
                                     checkVoice &&  
                                     <>
                                         {
-                                            !checkNoiseLv1 && 
+                                            !checkNoise && 
                                             "노이즈 체그 단계입니다"
                                         }
                                         <WaveSurferContainer
                                             hanleChangeVoice = {this.hanleChangeVoice}
                                         />
                                         {
-                                            checkVoiceLv2 && 
+                                            finishVoice && 
                                                 <p className="text-center">마지막으로 버튼을 한번 누려주세요</p>
                                         }
                                     </>
