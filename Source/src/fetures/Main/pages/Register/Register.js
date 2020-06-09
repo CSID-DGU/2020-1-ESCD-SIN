@@ -56,15 +56,14 @@ export default class Register extends Component {
         }else{
             if(finishVoice){
                 alert("회원가입 성곡했습니다")
+                this.props.history.push('/')
             }else{
                 alert("음성 정보를 각 단계를 먼저 진행해주세요")
             }
-
         }
-        // this.props.history.push('/')
     }
     hanleChangeVoice = (blob) => {
-        const { checkNoise, checkWordVoice, id, email, password, confirmPassword, checkVoiceLv2 } = this.state;
+        const { checkNoise, checkWordVoice, id, email, password, confirmPassword, finishVoice } = this.state;
         //처음에는 CheckNoise 함수를 들어감
         if(!checkNoise)
         {
@@ -112,7 +111,7 @@ export default class Register extends Component {
             }
             return;
         }else{
-            if(!checkVoiceLv2)
+            if(!finishVoice)
             {
                 //노이즈 체크한 단계를 넘어서 단어를 5개를 받아서 2간계를 넘
                 //받은 5개 단어를 받아서 음성을 보냄
@@ -130,7 +129,6 @@ export default class Register extends Component {
                     const { data } = res;
                     if(data === "pass"){
                         this.setState({
-                            checkVoiceLv2 : true,
                             finishVoice: !this.state.finishVoice
                         })
                     }else{

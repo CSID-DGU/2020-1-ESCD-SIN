@@ -25,8 +25,7 @@ export default class Login extends Component {
             [name] : value
         })
     }
-    handleLogin = (event) => {
-        event.preventDefault();
+    handleLogin = () => {
         const { loginstate } = this.state;
         if(loginstate){
             this.props.history.push(`/service`);
@@ -66,7 +65,7 @@ export default class Login extends Component {
                                     handleCheckSuccess =  {this.handleCheckSuccess}
                                 />
                         }
-                        <button type="submit" className="btn btn-block" onClick = {event => this.handleLogin(event)}>로그인</button>
+                        <button type="submit" className="btn btn-block" onClick = {this.handleLogin}>로그인</button>
                     </div>
                 </div>
             </div>

@@ -8,9 +8,11 @@ export default class LoginWithVoice extends Component {
         this.state = {
             
             id: "",
-            checkNoiseLv1: false,
-            checkLevel1: true,
-            checkLevel2: false,
+
+            checkId: true,
+            checkNoise: false,
+            checkWordVoice: false,
+            finishVoice: false,
         }
     }
     handleChange = (event) => {
@@ -32,7 +34,7 @@ export default class LoginWithVoice extends Component {
         }).then((res) => {
             const { data } = res;
             if(data === 'User exist')
-                this.setState({checkLevel1: false})
+                this.setState({checkId: false})
             else{
                 alert("입력한 사용자가 존재하지 않습니다. 다시 확인해주세요")
             }
@@ -41,10 +43,10 @@ export default class LoginWithVoice extends Component {
         })
     }
     hanleChangeVoice = (blob) => {
-        const { checkNoiseLv1, checkVoiceLv2 } = this.state;
+        const { checkNoise, checkWordVoice, finishVoice } = this.state;
 
         //먼저를 환경의 노이즈를  API를 보내서 5개 단어를 다시 받음
-        if(!checkNoiseLv1) //Noise check 
+        if(!checkNoise) //Noise check 
         {
             const data = new FormData();
             data.append('file',blob)
@@ -59,14 +61,14 @@ export default class LoginWithVoice extends Component {
                 const words = data.split(" ");
                 this.setState({
                     words,
-                    checkNoiseLv1: true
+                    checkWordVoice : !checkWordVoice,
+                    checkNoise: !checkNoise
                 })
             }).catch((err) => {
                 console.log(err)
             })
         }else{
-            
-            if(!checkVoiceLv2)
+            if(!finishVoice)
             {
                 //노이즈 체크한 단계를 넘어서 단어를 5개를 받아서 2간계를 넘
                 //받은 5개 단어를 받아서 음성을 보냄
@@ -84,8 +86,7 @@ export default class LoginWithVoice extends Component {
                     const { data } = res;
                     if(data === "pass"){
                         this.setState({
-                            checkVoiceLv2 : true,
-                            checkLevel2: true
+                            finishVoice: !finishVoice
                         })
                     }else{
                         alert("단어가 음성 인식을 실패했습니다 다시 해주세요")
@@ -114,11 +115,11 @@ export default class LoginWithVoice extends Component {
         }
     }
     render() {
-        const { checkLevel1, checkLevel2, checkNoiseLv1, words } = this.state;
+        const { checkId, checkWordVoice, checkNoise, words, finishVoice } = this.state;
         return (
             <div>
                 {
-                    checkLevel1 &&
+                    checkId &&
                     <>
                         <div className="form-group">
                             <label htmlFor="id">Id</label>
@@ -130,7 +131,7 @@ export default class LoginWithVoice extends Component {
                     </>
                 }
                 {
-                checkNoiseLv1 && 
+                checkWordVoice && 
                     <p style = {{textAlign: "center"}}>
                         {
                             words.map(item => (
@@ -140,17 +141,17 @@ export default class LoginWithVoice extends Component {
                     </p>
                 }
                 {
-                    !checkLevel1 && 
+                    !checkId && 
                     <>
                         {
-                        !checkNoiseLv1 && 
-                                "Check noise round 1"
+                            !checkNoise && 
+                            "노이즈 체그 단계입니다"
                         }
                         <WaveSurferContainer 
                             hanleChangeVoice = {this.hanleChangeVoice}
                         />
                         {
-                            checkLevel2 && 
+                            finishVoice && 
                                 <p className="text-center">마지막으로 버튼을 한번 누려주세요</p>
                         }
                     </>
