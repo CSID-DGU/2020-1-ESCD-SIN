@@ -96,7 +96,7 @@ def decrypt(key, filename):
             outputFile = temp_filename[0] + "/decode" + temp_filename[1].replace('encode',"")
         else:
             outputFile = temp_filename[0] + "/" + temp_filename[1] +  "/decode" + temp_filename[2].replace('encode',"")
-
+        print(filename)
         with open(filename, 'rb') as infile:
             filesize = int(infile.read(16))
             IV = infile.read(16)
@@ -414,16 +414,17 @@ def verify():
     print("[ DEBUG ] : user directory : " , user_directory)
     print("[ DEBUG ] : filename_wav : " , filename_wav)
     decrypt(getKey(os.getenv("PASSWORD_ECD")), user_directory + "encode" + username + ".wav")
+
     filename_wav = user_directory + "decode" + username + ".wav"
+    print("[ DEBUG ] : filename_wav : " , filename_wav)
     # ------------------------------------------------------------------------------------------------------------------------------------#
     #                                                                LTSD and MFCC                                                     #
     # ------------------------------------------------------------------------------------------------------------------------------------#
 
     # (rate, signal) = scipy.io.wavfile.read(audio.get_wav_data())
     (rate, signal) = scipy.io.wavfile.read(filename_wav)
-
+    
     extracted_features = extract_features(rate, signal)
-
     # ------------------------------------------------------------------------------------------------------------------------------------#
     #                                                          Loading the Gaussian Models                                                #
     # ------------------------------------------------------------------------------------------------------------------------------------#
@@ -466,7 +467,12 @@ def verify():
 
     auth_message = ""
 
-    if user_list[identified_user] == username:
+    # 파일 이름 암호화
+    cipher = AES.new(os.getenv("GMM_ECD").encode('utf-8'),AES.MODE_ECB) # never use ECB in strong systems obviously
+    encoded_path = base64.b64encode(cipher.encrypt(username.encode('utf-8').rjust(32))).decode('utf-8')
+    user_gmm_path = removeSpecialChars(encoded_path)
+
+    if user_list[identified_user] == user_gmm_path:
         print("[ * ] You have been authenticated!")
         auth_message = "success"
     else:
