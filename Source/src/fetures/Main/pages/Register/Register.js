@@ -31,8 +31,31 @@ export default class Register extends Component {
         })
     }
     subMit = () =>{
-        alert("로그인 성공했습니다");
-        this.props.history.push('/')
+        const { checkVoice } = this.state;
+        if(!checkVoice){ //음성 없이 회원가입
+            const {id, email, password, confirmPassword} = this.state;
+            if(id && email && password && confirmPassword){
+                Http.post({
+                    path: 'joinnoVoice',
+                    payload: {username: id, email, password}
+                }).then(res => {
+                    const { data } = res;
+                    if(data === "pass"){
+                        alert("회원가입 성곡했습니다")
+                        this.props.history.push('/')
+                    }
+                    else
+                        alert("이미 존재 사용자입니다. 정보를 다시 입력해주세요.")
+                }).catch(err => {
+                    console.log(err)
+                })
+            }else{
+                alert("빈 값을 입력헀습니다. 다시 확인해주세요")
+            }
+        }else{
+            alert("회원가입 성곡했습니다")
+        }
+        // this.props.history.push('/')
     }
     hanleChangeVoice = (blob) => {
         const { checkNoiseLv1, id, email, password, confirmPassword } = this.state;

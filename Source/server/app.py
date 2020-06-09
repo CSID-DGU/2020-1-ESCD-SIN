@@ -118,7 +118,31 @@ def getKey(password):
 def removeSpecialChars(str):
     result = re.sub('[^a-zA-Z0-9 \n\.]', '', str)
     return result
+def encoded_password(pwd):
+    cipher = AES.new(os.getenv("PASSWORD_ECD").encode('utf-8'),AES.MODE_ECB) # never use ECB in strong systems obviously
+    encoded_password = base64.b64encode(cipher.encrypt(pwd.encode('utf-8').rjust(32)))
+    return encoded_password
+        
+@app.route('/joinnoVoice', methods=["GET", "POST"])
+def enroll_no_voice():
+    if request.method  == 'POST':
+        data = request.get_json()
 
+        username = data['username']
+        email = data['email']
+        password = data['password']
+
+        user = db.sqlSelect("SELECT * FROM users where user_id = %s",(username))
+        if(len(user) == 0):
+            password = encoded_password(password)
+            db.sql("INSERT INTO users (user_id, password, email) VALUES (%s, %s, %s)",(username, password, email))
+            print("new user join request pass")
+            return "pass"
+        else:
+            print("user already exists")
+            return "fail"
+    else:
+        return "no method for request"
 # 음석을 인식 기능을 클릭하는 시에 
 # 서버에서 해당하는 Id과 비밀번호를 받아서 저장한다
 # 전달되는 아이디를 중복하는 경우에는 어떻게?
