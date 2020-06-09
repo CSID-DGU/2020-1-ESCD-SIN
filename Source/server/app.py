@@ -171,7 +171,7 @@ def enroll():
         # 사용자는 이미 존재했으면 해당하는 User Overwriting ... 뭐라고해 야지
         if not os.path.exists(user_directory):
             os.makedirs(user_directory)
-            db.sql("INSERT INTO users (user_id, password, email, pathvoice) VALUES (%s, %s, %s, %s)",(username, encoded_password, email, user_path))
+            db.sql("INSERT INTO users (user_id, password, email, pathvoice, isvoice) VALUES (%s, %s, %s, %s)",(username, encoded_password, email, user_path, 1))
 
             print("[ * ] Directory ", username,  " Created ...")
             return "created user"
@@ -423,7 +423,7 @@ def verify():
 
     # (rate, signal) = scipy.io.wavfile.read(audio.get_wav_data())
     (rate, signal) = scipy.io.wavfile.read(filename_wav)
-    
+
     extracted_features = extract_features(rate, signal)
     # ------------------------------------------------------------------------------------------------------------------------------------#
     #                                                          Loading the Gaussian Models                                                #
@@ -471,10 +471,17 @@ def verify():
     cipher = AES.new(os.getenv("GMM_ECD").encode('utf-8'),AES.MODE_ECB) # never use ECB in strong systems obviously
     encoded_path = base64.b64encode(cipher.encrypt(username.encode('utf-8').rjust(32))).decode('utf-8')
     user_gmm_path = removeSpecialChars(encoded_path)
-
+    print(user_gmm_path)
     if user_list[identified_user] == user_gmm_path:
         print("[ * ] You have been authenticated!")
-        auth_message = "success"
+        user = db.sqlSelect("SELECT * FROM users where pathgmm = %s",(user_gmm_path + ".gmm"))
+        auth_message = {
+            "user": {
+                "username": user[1],
+                "email": user[2]
+            },
+            "message": "pass"
+        }
     else:
         print("[ * ] Sorry you have not been authenticated")
         auth_message = "fail"

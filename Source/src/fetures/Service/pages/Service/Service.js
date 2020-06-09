@@ -2,7 +2,9 @@ import React, { Component } from 'react'
 import './Service.scss'
 
 export default class Service extends Component {
-
+    constructor(props) {
+        super(props)
+    }
     render() {
         return (
             <div className="container">
@@ -23,6 +25,13 @@ export default class Service extends Component {
                             <div className="panel-body">
                                 <form id="add-account">
                                     <div className="form-group">
+                                        <label for="initial-deposit">Send Id Account</label>
+                                        <div className="input-group">
+                                            <div className="input-group-addon">ID</div>
+                                            <input type="number" min="0" name="initial-deposit" id="initial-deposit" className="form-control" autofocus required />
+                                        </div>
+                                    </div>
+                                    <div className="form-group">
                                         <label for="initial-deposit">Initial deposit</label>
                                         <div className="input-group">
                                             <div className="input-group-addon">WON</div>
@@ -30,7 +39,14 @@ export default class Service extends Component {
                                             <div className="input-group-addon">.00</div>
                                         </div>
                                     </div>
-                                    <button type="submit" className="btn btn-primary">확인!</button>
+                                    <button type="submit" className="btn btn-primary">확인!</button><br/><br/>
+                                    <div className = "infor">
+                                    {/* <div class="spinner-border text-primary"></div> */}
+                                    <label>받은 사람 성명 : </label>
+                                    <p>as</p>
+                                    <label>보내는 돈 :</label>
+                                    <p>as</p>
+                                    </div>
                                 </form>
                             </div>
                         </div>

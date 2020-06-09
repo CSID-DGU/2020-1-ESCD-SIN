@@ -98,10 +98,13 @@ export default class LoginWithVoice extends Component {
                 Http.get({
                     path: '/verify'
                 }).then(res => {
-                    const { data } = res
+                    const { data } = res;
+                    console.log(res)
                     const { handleCheckSuccess } = this.props;
-                    if(data === "success")
+                    if(data.message === "pass")
                     {
+                        const {user} = data;
+                        localStorage.setItem("user",user.username)
                         alert("음석 인식 인증 기능을 확인했습니다.")
                         handleCheckSuccess(true);
                     }else{
