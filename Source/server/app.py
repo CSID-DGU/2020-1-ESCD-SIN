@@ -219,7 +219,41 @@ def auth():
 
     else:
         print('its coming here')
+# 아아디 체크함
+@app.route('/loginwithnovoice', methods=['POST', 'GET'])
+def auth():
 
+    if request.method == 'POST':
+
+        # Clien부터 보낸 username과 password를 받아
+        data = request.get_json()
+
+        # Model 저장하는 경로
+        # user_directory = 'Models/wav/'
+        username = data['username']
+        password = data['password']
+
+        cipher = AES.new(os.getenv("PASSWORD_ECD").encode('utf-8'),AES.MODE_ECB) # never use ECB in strong systems obviously
+        encoded_password = base64.b64encode(cipher.encrypt(password.encode('utf-8').rjust(32)))
+
+        user = db.sqlSelect("SELECT * FROM users where user_id = %s and password = %s",(username, encoded_password))
+
+
+        if(len(user) == 0):
+            auth_message = {
+                "message": "fail"
+            }
+        else :
+            auth_message = {
+                "user": {
+                    "username": user[1],
+                    "email": user[2]
+                },
+                "message": "pass"
+            }
+        return auth_message
+    else:
+        print('its coming here')
 # 이 API를 voice api이다
 # Check Background_noise
 @app.route('/vad', methods=['GET', 'POST'])
