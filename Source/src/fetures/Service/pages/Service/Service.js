@@ -43,9 +43,9 @@ export default class Service extends Component {
                                     <div className = "infor">
                                     {/* <div class="spinner-border text-primary"></div> */}
                                     <label>받은 사람 성명 : </label>
-                                    <p>as</p>
+                                    <p>홍길도</p>
                                     <label>보내는 돈 :</label>
-                                    <p>as</p>
+                                    <p>2.000.000원</p>
                                     </div>
                                 </form>
                             </div>
@@ -56,7 +56,16 @@ export default class Service extends Component {
                 <div id="account" class="col-md-6 col-md-offset-3">
                     <div class="panel panel-default">
                         <div class="panel-heading text-center lead">Your Account</div>
-                        <div class="panel-body">
+                        <div className="panel-body">
+                            <div className="form-group">
+                                <label for="initial-deposit">잔액</label>
+                                <div className="input-group">
+                                    <div className="input-group-addon">ID</div>
+                                    <input type="text" min="0" name="initial-deposit" id="initial-deposit" className="form-control" autofocus required  value = "1.000.000"/>
+                                </div>
+                            </div>
+                        </div>
+                        {/* <div class="panel-body">
                             <form id="deposit">
                                 <div class="form-group">
                                     <label for="deposit-amount">Deposit:</label>
@@ -87,19 +96,27 @@ export default class Service extends Component {
                                         <button type="submit" class="btn btn-danger">Withdraw!</button>
                                     </div>
                             </form>
-                        </div>
+                        </div> */}
                     </div>
 
                     <div class="panel panel-info" id="history-panel">
                         <div class="panel-heading text-center lead" id="history-header">Account History</div>
                         <table class="table table-striped" id="history">
-                        <tr>
-                            <th>Date</th>
-                            <th>Amount</th>
-                            <th>Balance</th>
-                        </tr>
+                            <tr>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Balance</th>
+                            </tr>
+                            <tbody>
+                                <tr>
+                                    <th>2020.02.03</th>
+                                    <th>1.000.000원</th>
+                                    <th>Balance</th>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
+                    <br/><br/>
                 </div>
             </div>
         )
