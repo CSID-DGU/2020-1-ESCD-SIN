@@ -12,7 +12,6 @@ function AccountHistory(props) {
         Http.get({
             path: `/history/${user_id}`
         }).then(({data}) => {
-            console.log(data)
             setHistory(data.data)
         }).catch(err => {
             console.log(err)

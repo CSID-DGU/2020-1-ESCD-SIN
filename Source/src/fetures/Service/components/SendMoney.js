@@ -75,7 +75,7 @@ export default class SendMoney extends Component {
                     enableUser: !this.state.enableUser,
                     resultCheck: []
                 })
-                alert("돈을 보냈습니다")
+                alert("돈을 보냈습니다");
             }
         }).catch(err => {
             console.log(err)
