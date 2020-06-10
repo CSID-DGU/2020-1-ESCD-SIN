@@ -483,13 +483,13 @@ def checkuser():
     if request.method == 'POST':
         data = request.get_json()
         user = db.sqlSelect("SELECT * FROM users where user_id = %s",(data['receiveUser']))
-
         if(len(user) == 0):
             auth_state = {
                 'message': 'not exists',
             }
         else :
             bank = user[0][9]
+            print(data['bankName'])
             if(bank == data['bankName']):
                 auth_state = {
                     'message': 'exists',
@@ -509,7 +509,15 @@ def sendmoney():
         send_user = data['sendUser']
         receive_user = data['receiveUser']
         send_money = data['money']
-        print("pass")
+        try:
+            db.sql("INSERT INTO history (send_user, receive_user, money) VALUES (%s, %s, %s)",(send_user, receive_user, send_money))
+            user = db.sqlSelect("SELECT * FROM users where user_id = %s",(receive_user))
+            money = float(user[0][8]) + float(send_money)
+            print(money)
+            db.sql("UPDATE users SET money = %s WHERE user_id = %s",(money, receive_user))
+            return "pass"
+        except ValueError as error:
+            return "fail"
     else:
         pass
 # 다음부터 사용자를 인증합니다.

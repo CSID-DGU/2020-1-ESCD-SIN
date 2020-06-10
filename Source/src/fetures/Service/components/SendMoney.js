@@ -34,6 +34,7 @@ export default class SendMoney extends Component {
             }
         }).then(({data}) => {
             const { message } = data;
+            console.log(message)
             if(message === 'exists')
             {
                 let resultCheck = {
@@ -66,13 +67,21 @@ export default class SendMoney extends Component {
                 money: sendMoney
             }
         }).then(({data}) => {
-            
+            if(data === 'pass'){
+                this.setState({
+                    receiveUser: "",
+                    sendMoney: "",
+                    enableUser: !this.state.enableUser,
+                    resultCheck: []
+                })
+                alert("돈을 보냈습니다")
+            }
         }).catch(err => {
             console.log(err)
         })
     }
     render() {
-        const { checkLoading, resultCheck, enableUser } = this.state
+        const { checkLoading, resultCheck, enableUser, receiveUser, sendMoney } = this.state
         return (
             <SendMoneyDiv className="row">
                 <div id="bank" className="col-md-6 col-md-offset-3">
@@ -84,7 +93,7 @@ export default class SendMoney extends Component {
                                     <label htmlFor="initial-deposit">Send Id Account</label>
                                     <div className="input-group">
                                         <div className="input-group-addon">ID</div>
-                                        <input type="number" min="0" name="receiveUser" id="initial-deposit" className="form-control" autoFocus required  onChange = {e => this.handleChange(e)}/>
+                                        <input type="number" min="0" name="receiveUser" id="initial-deposit" value = {receiveUser} className="form-control" autoFocus required  onChange = {e => this.handleChange(e)}/>
                                     </div>
                                 </div>
                                 <div className="form-group">
@@ -92,9 +101,9 @@ export default class SendMoney extends Component {
                                     <div className="input-group">
                                         <div className="input-group-addon">Name</div>
                                         <select className="form-control" name ="bankName" value = {this.state.bankName} onChange = {e => this.handleChange(e)} >
-                                            <option value = "신한은행">신한 은행</option>
-                                            <option value = "우리은행">우리 은행</option>
-                                            <option value = "농합은행">농합 은행</option>
+                                            <option value = "신한 은행">신한 은행</option>
+                                            <option value = "우리 은행">우리 은행</option>
+                                            <option value = "농합 은행">농합 은행</option>
                                         </select>
                                     </div>
                                 </div>
@@ -102,7 +111,7 @@ export default class SendMoney extends Component {
                                     <label htmlFor="initial-deposit">Initial deposit</label>
                                     <div className="input-group">
                                         <div className="input-group-addon">WON</div>
-                                        <input type="number" min="0" name="sendMoney" id="initial-deposit" className="form-control" autoFocus required onChange = {e => this.handleChange(e)} />
+                                        <input type="number" min="0" name="sendMoney" id="initial-deposit" className="form-control" value = {sendMoney} autoFocus required onChange = {e => this.handleChange(e)} />
                                         <div className="input-group-addon">.00</div>
                                     </div>
                                 </div>
