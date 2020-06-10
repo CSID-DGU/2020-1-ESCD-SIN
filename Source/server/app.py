@@ -501,6 +501,17 @@ def checkuser():
         return auth_state
     else:
         pass
+
+@app.route("/sendmoney", methods=['POST'])
+def sendmoney():
+    if request.method == 'POST':
+        data = request.get_json()
+        send_user = data['sendUser']
+        receive_user = data['receiveUser']
+        send_money = data['money']
+        print("pass")
+    else:
+        pass
 # 다음부터 사용자를 인증합니다.
 @app.route("/verify", methods=['GET'])
 def verify():

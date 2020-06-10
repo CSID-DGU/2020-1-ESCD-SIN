@@ -12,6 +12,7 @@ export default class SendMoney extends Component {
 
             checkLoading: false,
             resultCheck: [],
+            enableUser: false,
         }
     }
     handleChange = (e) =>{
@@ -41,7 +42,8 @@ export default class SendMoney extends Component {
                 }
                 this.setState({
                     checkLoading : !this.state.checkLoading,
-                    resultCheck: [resultCheck]
+                    resultCheck: [resultCheck],
+                    enableUser: !this.state.enableUser
                 })
             }else{
                 this.setState({
@@ -52,8 +54,25 @@ export default class SendMoney extends Component {
             console.log(err)
         })
     }
+    handleSend = (e) => {
+        e.preventDefault();
+        const { receiveUser, sendMoney} = this.state;
+        const user = JSON.parse(localStorage.getItem('user'));
+        Http.post({
+            path: `/sendmoney`,
+            payload: {
+                sendUser: user.user_id,
+                receiveUser,
+                money: sendMoney
+            }
+        }).then(({data}) => {
+            
+        }).catch(err => {
+            console.log(err)
+        })
+    }
     render() {
-        const { checkLoading, resultCheck } = this.state
+        const { checkLoading, resultCheck, enableUser } = this.state
         return (
             <SendMoneyDiv className="row">
                 <div id="bank" className="col-md-6 col-md-offset-3">
@@ -87,19 +106,24 @@ export default class SendMoney extends Component {
                                         <div className="input-group-addon">.00</div>
                                     </div>
                                 </div>
-                                <button type="submit" className="btn btn-primary" onClick = {e => this.handleChangeCheck(e)}>확인!</button><br/><br/>
+                                
+                                {
+                                    enableUser ?
+                                    <button type="submit" className="btn btn-primary" onClick = {e => this.handleSend(e)}>보내</button> :
+                                    <button type="submit" className="btn btn-primary" onClick = {e => this.handleChangeCheck(e)}>확인</button>
+                                }
                                 {
                                     checkLoading && 
                                         <div className ="spinner-border text-primary d-flex" style = {{margin: '0 auto'}}></div>
                                 }   
                                 {
                                     resultCheck.length !== 0 &&
-                                        <div className = "infor">
+                                        <AccountCheckDiv className = "infor">
                                             <label>받은 사람 성명 : </label>
                                                 <p>{resultCheck[0].name}</p>
                                             <label>보내는 돈 :</label>
                                                 <p>{resultCheck[0].money}</p>
-                                        </div>
+                                        </AccountCheckDiv>
                                 }
                             </form>
                         </div>
@@ -111,4 +135,7 @@ export default class SendMoney extends Component {
 }
 
 const SendMoneyDiv = styled.div`
+`
+const AccountCheckDiv = styled.div`
+    margin-top: 2rem
 `
