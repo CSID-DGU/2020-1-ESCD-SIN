@@ -21,6 +21,7 @@ const FooterWarapper = styled.div`
     align-items: center;
     bottom: 0px;
     padding: 10px 0px;
+    z-index: 99;
     p{
         margin-bottom: 0px;
     }

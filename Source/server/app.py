@@ -221,7 +221,7 @@ def auth():
         print('its coming here')
 # 아아디 체크함
 @app.route('/loginwithnovoice', methods=['POST', 'GET'])
-def auth():
+def loginwithnovoice():
 
     if request.method == 'POST':
 
@@ -232,25 +232,36 @@ def auth():
         # user_directory = 'Models/wav/'
         username = data['username']
         password = data['password']
-
         cipher = AES.new(os.getenv("PASSWORD_ECD").encode('utf-8'),AES.MODE_ECB) # never use ECB in strong systems obviously
         encoded_password = base64.b64encode(cipher.encrypt(password.encode('utf-8').rjust(32)))
 
-        user = db.sqlSelect("SELECT * FROM users where user_id = %s and password = %s",(username, encoded_password))
-
-
+        user = db.sqlSelect("SELECT * FROM users where user_id = %s",(username))
+        print(user)
+        # 입력한 사용자를 존재하지 않음
         if(len(user) == 0):
             auth_message = {
                 "message": "fail"
             }
         else :
-            auth_message = {
-                "user": {
-                    "username": user[1],
-                    "email": user[2]
-                },
-                "message": "pass"
-            }
+            # 비밀번호 체크함
+            password = user[0][2]
+            print(encoded_password)
+            if(password == encoded_password.decode('utf-8')) :
+                user = user[0]
+                auth_message = {
+                    "user": {
+                        "id": user[0],
+                        "user_id": user[1],
+                        "email": user[3],
+                        "isvoice": user[7],
+                        "money": user[8]
+                    },
+                    "message": "pass"
+                }
+            else : 
+                auth_message = {
+                    "message": "fail"
+                }
         return auth_message
     else:
         print('its coming here')
@@ -508,11 +519,14 @@ def verify():
     print(user_gmm_path)
     if user_list[identified_user] == user_gmm_path:
         print("[ * ] You have been authenticated!")
-        user = db.sqlSelect("SELECT * FROM users where pathgmm = %s",(user_gmm_path + ".gmm"))
+        user = db.sqlSelect("SELECT * FROM users where pathgmm = %s",(user_gmm_path + ".gmm"))[0]
         auth_message = {
             "user": {
-                "username": user[1],
-                "email": user[2]
+                "id": user[0],
+                "user_id": user[1],
+                "email": user[3],
+                "isvoice": user[7],
+                "money": user[8]
             },
             "message": "pass"
         }

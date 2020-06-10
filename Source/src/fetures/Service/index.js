@@ -5,7 +5,6 @@ import Service from './pages/Service/Service';
 
 function ServiceMain(props) {
     const match = useRouteMatch();
-    console.log(match)
     return (
         <Switch>
             <Route exact path = {match.url} component = {Service}/>

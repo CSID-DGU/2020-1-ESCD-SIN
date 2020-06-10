@@ -20,17 +20,41 @@ export default class Login extends Component {
     }
     
     handleChange = (event) => {
-        const { name, value} = event;
+        const { name, value} = event.target;
         this.setState({
             [name] : value
         })
     }
     handleLogin = () => {
         const { loginstate } = this.state;
-        if(loginstate){
+        if(loginstate){ //음성 인식을 성공하여 서비스 페이지를 이동함
             this.props.history.push(`/service`);
         }else{ //Login with text and password
-            alert("입력한 정보를 다시 확인해주세요.")
+            const { id, password }  = this.state;
+            if(id && password){
+                Http.post({
+                    path: '/loginwithnovoice',
+                    payload: {
+                        'username': id, password
+                    }
+                }).then(({data}) => {
+                    const { message } = data;
+                    if(message === 'fail')
+                    {
+                        alert("아이디를 틀렸습니다. 확인해주세요")
+                    }else{
+                        const { id, user_id,email, isvoice, money } = data.user;
+                        const user = {id, user_id, email, isvoice, money};
+                        localStorage.setItem("user", JSON.stringify(user))
+                        alert("로그인 성공했습니다");
+                        this.props.history.push(`/service`);
+                    }
+                }).catch(err =>
+                    console.log(err)    
+                )
+            }else{
+                alert("입력한 정보를 다시 확인해주세요.")
+            }
         }
     }
     
@@ -38,7 +62,7 @@ export default class Login extends Component {
         this.setState({loginstate : state})
     }
     render() {
-        const { loginWithVoice } = this.state;
+        const { loginWithVoice, id, password } = this.state;
         return (
             <div className="container-fluid">
                 <div className="row justify-content-center">
@@ -54,11 +78,11 @@ export default class Login extends Component {
                                 <>
                                     <div className="form-group">
                                         <label htmlFor="id">Id</label>
-                                        <input type="text" name="id" id="id" className="form-control" placeholder="Id..."/>
+                                        <input type="text" name="id" id="id" className="form-control" placeholder="Id..." value = {id} onChange = {e => this.handleChange(e)}/>
                                     </div>
                                     <div className="form-group">
                                         <label htmlFor="password">Password</label>
-                                        <input type="password" name="password" id="password" className="form-control" placeholder="Passwod..."/>
+                                        <input type="password" name="password" id="password" className="form-control" placeholder="Passwod..." value = {password} onChange = {e => this.handleChange(e)}/>
                                     </div>
                                 </> :
                                 <LoginWithVoice
