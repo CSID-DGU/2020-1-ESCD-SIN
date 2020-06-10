@@ -448,6 +448,17 @@ def biometrics():
             return ("Encode GMM error", Error)
         return "User has been successfully enrolled ...!!"
 
+@app.route("/getmoney/<id>", methods=['GET'])
+def getmony(id=None):
+    if request.method == 'GET':
+        user_money = db.sqlSelect("SELECT money FROM users where id = %s",(id))[0]
+        auth_money = {
+            'message': 'pass',
+            'data': user_money[0]
+        }
+        return auth_money
+    else:
+        pass
 # 다음부터 사용자를 인증합니다.
 @app.route("/verify", methods=['GET'])
 def verify():
