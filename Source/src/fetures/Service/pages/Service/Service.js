@@ -28,6 +28,7 @@ export default class Service extends Component {
                 id: user_id
             })
         }).catch(err => {
+            alert("서버 연결 실패합니다. 다시 확인해주세요.")
             console.log(err)
         })
     }

@@ -459,6 +459,24 @@ def getmony(id=None):
         return auth_money
     else:
         pass
+
+@app.route("/history/<id>", methods=['GET'])
+def gethistory(id=None):
+    if request.method == 'GET':
+        history = db.sqlSelect("SELECT * FROM history where send_user = %s",(id))
+        if(len(history) != 0):
+            auth_history = {
+                'message': 'pass',
+                'data': history[0]
+            }
+        else :
+            auth_history = {
+                'message': 'pass',
+                'data': []
+            }
+        return auth_history
+    else:
+        pass
 # 다음부터 사용자를 인증합니다.
 @app.route("/verify", methods=['GET'])
 def verify():
