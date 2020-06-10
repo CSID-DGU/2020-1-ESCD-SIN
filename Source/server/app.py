@@ -477,6 +477,30 @@ def gethistory(id=None):
         return auth_history
     else:
         pass
+
+@app.route("/checkuser", methods=['POST'])
+def checkuser():
+    if request.method == 'POST':
+        data = request.get_json()
+        user = db.sqlSelect("SELECT * FROM users where user_id = %s",(data['receiveUser']))
+
+        if(len(user) == 0):
+            auth_state = {
+                'message': 'not exists',
+            }
+        else :
+            bank = user[0][9]
+            if(bank == data['bankName']):
+                auth_state = {
+                    'message': 'exists',
+                }
+            else:
+                auth_state = {
+                    'message': 'not exists',
+                }
+        return auth_state
+    else:
+        pass
 # 다음부터 사용자를 인증합니다.
 @app.route("/verify", methods=['GET'])
 def verify():
