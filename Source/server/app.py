@@ -467,11 +467,11 @@ def gethistory(id=None):
         if(len(history) != 0):
             auth_history = {
                 'message': 'pass',
-                'data': history[0]
+                'data': history
             }
         else :
             auth_history = {
-                'message': 'pass',
+                'message': 'fail',
                 'data': []
             }
         return auth_history
@@ -509,11 +509,11 @@ def sendmoney():
         send_user = data['sendUser']
         receive_user = data['receiveUser']
         send_money = data['money']
+        receive_user_bank = data['receiveUserBank']
         try:
-            db.sql("INSERT INTO history (send_user, receive_user, money) VALUES (%s, %s, %s)",(send_user, receive_user, send_money))
+            db.sql("INSERT INTO history (send_user, receive_user, money, bank) VALUES (%s, %s, %s, %s)",(send_user, receive_user, send_money, receive_user_bank))
             user = db.sqlSelect("SELECT * FROM users where user_id = %s",(receive_user))
             money = float(user[0][8]) + float(send_money)
-            print(money)
             db.sql("UPDATE users SET money = %s WHERE user_id = %s",(money, receive_user))
             return "pass"
         except ValueError as error:

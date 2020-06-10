@@ -64,7 +64,8 @@ export default class SendMoney extends Component {
             payload: {
                 sendUser: user.user_id,
                 receiveUser,
-                money: sendMoney
+                money: sendMoney,
+                receiveUserBank: this.state.bankName,
             }
         }).then(({data}) => {
             if(data === 'pass'){

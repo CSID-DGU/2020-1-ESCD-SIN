@@ -8,10 +8,11 @@ function AccountHistory(props) {
 
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem('user'));
-        const { id } = user;
+        const { user_id } = user;
         Http.get({
-            path: `/history/${id}`
+            path: `/history/${user_id}`
         }).then(({data}) => {
+            console.log(data)
             setHistory(data.data)
         }).catch(err => {
             console.log(err)
@@ -25,19 +26,23 @@ function AccountHistory(props) {
                     <table className="table table-striped" id="history">
                         <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>Amount</th>
-                                <th>Bank Name</th>
+                                <th>번호</th>
+                                <th>입금 계좌</th>
+                                <th>입금 금액</th>
+                                <th>은행</th>
+                                <th>날짜</th>
                             </tr>
                         </thead>
                         <tbody>
                                 {
-                                    history.map(item => {
+                                    history.map((item,index) => {
                                         return (
-                                            <tr>
-                                                <th>{item.data}</th>
-                                                <th>{item.money}</th>
-                                                <th>{item.bank}</th>
+                                            <tr key = {index}>
+                                                <th>{index}</th>
+                                                <th>{item[2]}</th>
+                                                <th>{parseInt(item[4]).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</th>
+                                                <th>{item[3]}</th>
+                                                <th>{item[5]}</th>
                                             </tr>
                                         )
                                     })
