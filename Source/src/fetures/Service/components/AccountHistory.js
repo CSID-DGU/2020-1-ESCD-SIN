@@ -31,11 +31,17 @@ function AccountHistory(props) {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <th>2020.02.03</th>
-                                <th>1.000.000원</th>
-                                <th>신한은행</th>
-                            </tr>
+                                {
+                                    history.map(item => {
+                                        return (
+                                            <tr>
+                                                <th>{item.data}</th>
+                                                <th>{item.money}</th>
+                                                <th>{item.bank}</th>
+                                            </tr>
+                                        )
+                                    })
+                                }
                         </tbody>
                     </table>
             }
