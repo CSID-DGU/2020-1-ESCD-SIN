@@ -89,7 +89,7 @@ export default class LoginWithVoice extends Component {
                             finishVoice: !finishVoice
                         })
                     }else{
-                        alert("단어가 음성 인식을 실패했습니다 다시 해주세요")
+                        alert("단어 음성 인식을 실패했습니다. 다시 해주세요.")
                     }
                 }).catch((err) => {
                     console.log(err)
@@ -106,7 +106,7 @@ export default class LoginWithVoice extends Component {
                         const { id, user_id,email, isvoice, money } = data.user;
                         const user = {id, user_id, email, isvoice, money};
                         localStorage.setItem("user", JSON.stringify(user))
-                        alert("음석 인식 인증 기능을 확인했습니다.")
+                        alert("음석 인식 인증 기능을 확인했습니다")
                         handleCheckSuccess(true);
                     }else{
                         alert("사용자 인식 실패합니다.")
