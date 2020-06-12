@@ -17,6 +17,7 @@ export default class Register extends Component {
             email: "",
             password: "",
             confirmPassword: "",
+            bankName: "신한 은행",
             blob: {},
             words: [],
             
@@ -55,7 +56,7 @@ export default class Register extends Component {
             }
         }else{
             if(finishVoice){
-                alert("회원가입 성곡했습니다")
+                alert("회원가입 성공했습니다")
                 this.props.history.push('/')
             }else{
                 alert("음성 정보를 각 단계를 먼저 진행해주세요")
@@ -63,7 +64,7 @@ export default class Register extends Component {
         }
     }
     hanleChangeVoice = (blob) => {
-        const { checkNoise, checkWordVoice, id, email, password, confirmPassword, finishVoice } = this.state;
+        const { checkNoise, checkWordVoice, id, email, password, confirmPassword, finishVoice, bankName } = this.state;
         //처음에는 CheckNoise 함수를 들어감
         if(!checkNoise)
         {
@@ -75,7 +76,7 @@ export default class Register extends Component {
                 //입력한 정보를 각 User 저장할 파일을 경로를 만듦
                 Http.post({
                     path: '/enroll',
-                    payload: {username: id, email: email,  password: password}
+                    payload: {username: id, email: email,  password: password, bankName: bankName}
                 }).then((res) => {
                     const { data } = res;
                     if(data === 'created user'){
@@ -153,7 +154,7 @@ export default class Register extends Component {
         }
     }
     render() {
-        const { checkVoice, id, email, password, confirmPassword, words,checkWordVoice, checkNoise, finishVoice} = this.state;
+        const { checkVoice, id, email, password, confirmPassword, words,checkWordVoice, checkNoise, finishVoice, bankName} = this.state;
         return (
             <div className="container-fluid">
                 <div className="row justify-content-center">
@@ -181,6 +182,16 @@ export default class Register extends Component {
                                             <p style={{color: "red"}}>비밀번호 동일하지 않습니다</p>
                                         : ""
                                 }
+                            </div>
+                            <div className="form-group">
+                                <label for="id">Bank Name</label>
+                                <div className="input-group">
+                                    <select className="form-control" name ="bankName" value = {bankName} onChange = {this.handleCheck} >
+                                        <option value = "신한 은행">신한 은행</option>
+                                        <option value = "우리 은행">우리 은행</option>
+                                        <option value = "농합 은행">농합 은행</option>
+                                    </select>
+                                </div>
                             </div>
                             <div className="form-group">
                                 <label for="id">Voice Authentication</label>

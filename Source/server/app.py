@@ -157,6 +157,7 @@ def enroll():
         username = data['username']
         email = data['email']
         password = data['password'] 
+        bank = data['bankName'] 
 
         # 해당하는 User에서 username 기준으로 비밀번호 암호화
         cipher = AES.new(os.getenv("PASSWORD_ECD").encode('utf-8'),AES.MODE_ECB) # never use ECB in strong systems obviously
@@ -168,13 +169,16 @@ def enroll():
     
         user_directory = "Users/" + user_path + "/"
 
-        # 사용자는 이미 존재했으면 해당하는 User Overwriting ... 뭐라고해 야지
         if not os.path.exists(user_directory):
-            os.makedirs(user_directory)
-            db.sql("INSERT INTO users (user_id, password, email, pathvoice, isvoice) VALUES (%s, %s, %s, %s)",(username, encoded_password, email, user_path, 1))
-
-            print("[ * ] Directory ", username,  " Created ...")
-            return "created user"
+            try:
+                os.makedirs(user_directory)
+                db.sql("INSERT INTO users (user_id, password, email, pathvoice, isvoice, bank) VALUES (%s, %s, %s, %s, %s, %s)",(username, encoded_password, email, user_path, bank))
+                print("[ * ] Directory ", username,  " Created ...")
+                return "created user"
+                pass
+            except ValueError as error:
+                print(error)
+                return "fail create user"
         else:
             # print("[ * ] Directory ", username,  " already exists ...")
             # print("[ * ] Overwriting existing directory ...")
