@@ -172,7 +172,7 @@ def enroll():
         if not os.path.exists(user_directory):
             try:
                 os.makedirs(user_directory)
-                db.sql("INSERT INTO users (user_id, password, email, pathvoice, isvoice, bank) VALUES (%s, %s, %s, %s, %s, %s)",(username, encoded_password, email, user_path, bank))
+                db.sql("INSERT INTO users (user_id, password, email, pathvoice, isvoice, bank) VALUES (%s, %s, %s, %s, %s, %s)",(username, encoded_password, email, user_path, 1, bank))
                 print("[ * ] Directory ", username,  " Created ...")
                 return "created user"
                 pass
@@ -186,7 +186,6 @@ def enroll():
             # os.makedirs(user_directory)
             # print("[ * ] Directory ", username,  " Created ...")
             return "user already exists"
-
 
     else:
         return "fail"

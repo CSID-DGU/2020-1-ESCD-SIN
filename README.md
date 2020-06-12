@@ -64,6 +64,12 @@
     pip install -r requirements.txt
     ```
 
+1. Create .env file.
+
+    ```
+    PASSWORD_ECD=1234567890123456
+    GMM_ECD=1234567890123555
+    ```
     
 1. Run the application.
 

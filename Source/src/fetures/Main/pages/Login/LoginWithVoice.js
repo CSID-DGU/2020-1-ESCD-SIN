@@ -103,8 +103,9 @@ export default class LoginWithVoice extends Component {
                     const { handleCheckSuccess } = this.props;
                     if(data.message === "pass")
                     {
-                        const {user} = data;
-                        localStorage.setItem("user",user.username)
+                        const { id, user_id,email, isvoice, money } = data.user;
+                        const user = {id, user_id, email, isvoice, money};
+                        localStorage.setItem("user", JSON.stringify(user))
                         alert("음석 인식 인증 기능을 확인했습니다.")
                         handleCheckSuccess(true);
                     }else{
