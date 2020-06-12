@@ -64,7 +64,7 @@
     pip install -r requirements.txt
     ```
 
-1. Crate env file.
+1. Create env file.
 
     ```
     PASSWORD_ECD=1234567890123456
