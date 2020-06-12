@@ -73,8 +73,31 @@
     
 1. Go to `http://localhost:5000`
 
-## Demo
+## 4.API 데모
 
+### 기초 페이지 화면
+사이티를 접속하면 처음에 사용자에게 먼저 출력하는 페이지 입니다.설명 필요?
+![MainPage](https://user-images.githubusercontent.com/48276512/84485873-8d7dcf00-acd7-11ea-9953-d2af0a2d506f.PNG)
+
+### 회원가입 페이지 
+사용자는 기초 페이지에서 Join 클릭하면 회원가입 페이지를 이용합니다
+<img width="1269" alt="JoinPage" src="https://user-images.githubusercontent.com/48276512/84486290-2dd3f380-acd8-11ea-9b08-c6d42ab3cf18.PNG">
+
+### 회원가입 가입 성공 페이지
+회원가입 페이지에서 정보를 맞게 다 입력한 다음에 음성 인식 기능 추가하면 안내대로 각 단계를 성공적으로 완성한 다음에 기능을 추가 되었다고 
+사용자에세 알려준다.
+<p align="center">
+  <img width="460" height="300" src="https://user-images.githubusercontent.com/48276512/84488630-7345f000-acdb-11ea-94b8-9717de8c4ff7.gif">
+</p>
+
+### 로그인 페이지
+사용자는 기초 페이지에서 Login 클릭하면 회원가입 페이지를 이용합니다. 여기서 아이디 및 비밀번호로 로그인을 할 수 있고 아디디 및 음성 인식을 
+이용해서 로그인을 할 수 있다.
+![LoginWithMicrom](https://user-images.githubusercontent.com/48276512/84489915-60ccb600-acdd-11ea-926f-fc597ac1147b.PNG)
+
+### 로그인을 성공해서 마이 페이지를 이동합니다
+서비스 페이지
+<img width="1279" alt="Service page" src="https://user-images.githubusercontent.com/48276512/84490178-bbfea880-acdd-11ea-9b07-f5758cf67735.PNG">
 
 <br><br>
 
