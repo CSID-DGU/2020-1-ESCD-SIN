@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import TitleBody from '../../../component/TitleBody'
 export default class MainPage extends Component {
     static propTypes = {
         prop: PropTypes
@@ -10,12 +11,7 @@ export default class MainPage extends Component {
     render() {
         return (
             <div className="container">
-                <div className="row justify-content-center">
-                    <div className="col-auto text-center">
-                        <p className="display-4 font-weight-bold">Voice Biometrics for User Authentication</p>
-                        <img  id="maintenance-gif" class="banner-graphic animation" src="images/maintenance-animation-trim.gif"></img>
-                    </div>
-                </div>
+                <TitleBody />
                 <div className="row">
                     <div className = "col-lg-4">
                         <h3 className = "text-primary">문제 정의</h3>

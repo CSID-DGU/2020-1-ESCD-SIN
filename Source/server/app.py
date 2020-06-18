@@ -131,11 +131,12 @@ def enroll_no_voice():
         username = data['username']
         email = data['email']
         password = data['password']
+        bankName = data['bankName']
 
         user = db.sqlSelect("SELECT * FROM users where user_id = %s",(username))
         if(len(user) == 0):
             password = encoded_password(password)
-            db.sql("INSERT INTO users (user_id, password, email) VALUES (%s, %s, %s)",(username, password, email))
+            db.sql("INSERT INTO users (user_id, password, email, bank) VALUES (%s, %s, %s, %s)",(username, password, email, bankName))
             print("new user join request pass")
             return "pass"
         else:

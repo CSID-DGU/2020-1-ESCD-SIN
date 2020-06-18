@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 
 function Header(props) {
     const [user, setUser] = useState({});
-    console.log('I am Header')
+
     return (
         <HeaderWarapper className="navbar navbar-expand-lg px-sm-5">
             <Link to="/">
@@ -14,7 +14,7 @@ function Header(props) {
             </Link>
             <ul className="navbar-nav align-items-center">
                 <li className="nav-item ml-5">
-                    <Link to="/description">
+                    <Link to="/description" >
                         How it Works
                     </Link>
                 </li>
@@ -35,17 +35,27 @@ function Header(props) {
                 </li>
             </ul>
             <div className="ml-auto">
-                <Link to = "/join" className="">
-                        <span className="mr-2">
-                            <i className="fa fa-registered"/>
-                        </span>
-                        Join
-                </Link>
-                <Link to = "/login" className="ml-2">
+                <Link to = "/login" className="ml-2" style = {{
+                    padding: "10px",
+                    paddingLeft: "20px",
+                    paddingRight: "20px",
+                }} >
                         <span className="mr-2">
                             <i className="fa fa-user"/>
                         </span>
                         Login
+                </Link>
+                <Link to = "/join" className="" style = {{
+                    background: "blue",
+                    padding: "10px",
+                    paddingLeft: "20px",
+                    paddingRight: "20px",
+                    
+                }}>
+                        <span className="mr-2">
+                            <i className="fa fa-registered"/>
+                        </span>
+                        Join
                 </Link>
             </div>
         </HeaderWarapper>

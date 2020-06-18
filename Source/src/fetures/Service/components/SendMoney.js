@@ -94,7 +94,7 @@ export default class SendMoney extends Component {
                                     <label htmlFor="initial-deposit">Send Id Account</label>
                                     <div className="input-group">
                                         <div className="input-group-addon">ID</div>
-                                        <input type="number" min="0" name="receiveUser" id="initial-deposit" value = {receiveUser} className="form-control" autoFocus required  onChange = {e => this.handleChange(e)}/>
+                                        <input type="text" min="0" name="receiveUser" id="initial-deposit" value = {receiveUser} className="form-control" autoFocus required  onChange = {e => this.handleChange(e)}/>
                                     </div>
                                 </div>
                                 <div className="form-group">

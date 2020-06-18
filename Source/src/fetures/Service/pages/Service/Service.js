@@ -3,6 +3,7 @@ import './Service.scss'
 import SendMoney from '../../components/SendMoney'
 import AccountHistory from '../../components/AccountHistory'
 import Http from '../../../../component/Http'
+import styled from 'styled-components'
 
 export default class Service extends Component {
     constructor(props) {
@@ -39,7 +40,7 @@ export default class Service extends Component {
                     <div className="col-md-12">
                         <div className="panel panel-default" id="page-header">
                             <div className="panel-body" id="page-title">
-                                <h1 className="text-center" id="title">SIN Bank System !</h1>
+                                <TitleSystem className="text-center" id="title">WelCome SIN Bank System !</TitleSystem>
                             </div>
                         </div>
                     </div>
@@ -70,3 +71,7 @@ export default class Service extends Component {
         )
     }
 }
+const TitleSystem = styled.div`
+    font-size: 40px;
+    box-shadow: 0px 10px #2a2a72;
+`

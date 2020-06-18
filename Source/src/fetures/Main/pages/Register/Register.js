@@ -35,11 +35,11 @@ export default class Register extends Component {
     subMit = () =>{
         const { checkVoice, finishVoice } = this.state;
         if(!checkVoice){ //음성 없이 회원가입
-            const {id, email, password, confirmPassword} = this.state;
+            const {id, email, password, confirmPassword, bankName} = this.state;
             if(id && email && password && confirmPassword){
                 Http.post({
                     path: 'joinnoVoice',
-                    payload: {username: id, email, password}
+                    payload: {username: id, email, password, bankName}
                 }).then(res => {
                     const { data } = res;
                     if(data === "pass"){
