@@ -5,7 +5,7 @@ import MainPage from './pages/MainPage';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import Default from '../../component/Default';
-import ServiceMain from '../Service';
+import ServiceMain from '../Service/pages/Service';
 
 function Main(props) {
     const match = useRouteMatch();
@@ -15,6 +15,7 @@ function Main(props) {
             <Route path={`${match.url}login`} component ={Login} />
             <Route path={`${match.url}join`} component ={Register} />
             <Route path="/service" component={ServiceMain} />
+
             <Route component = {Default}/>
         </Switch>
     )

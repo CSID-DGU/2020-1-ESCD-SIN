@@ -14,24 +14,24 @@ function Header(props) {
             </Link>
             <ul className="navbar-nav align-items-center">
                 <li className="nav-item ml-5">
-                    <Link to="/">
+                    <Link to="/description">
                         How it Works
                     </Link>
                 </li>
                 <li className="nav-item ml-5">
-                    <Link to="/">
+                    <Link to="/futureplans">
                         Future Plans
                     </Link>
                 </li>
                 <li className="nav-item ml-5">
-                    <Link to="/">
+                    <Link to="/about">
                         About Us
                     </Link>
                 </li>
                 <li className="nav-item ml-5">
-                    <Link to="/">
+                    <a  href="https://github.com/CSID-DGU/2020-1-ESCD-SIN" target = "_blank">
                         Github
-                    </Link>
+                    </a>
                 </li>
             </ul>
             <div className="ml-auto">

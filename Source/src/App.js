@@ -7,7 +7,6 @@ import Header from './component/Header/Header';
 import Footer from './component/Footer/Footer';
 import Default from './component/Default';
 import Loading from './component/Loading';
-import ServiceMain from './fetures/Service';
 // import Main from './component/Main';
 
 const Main = React.lazy(() => import('./fetures/Main'));
