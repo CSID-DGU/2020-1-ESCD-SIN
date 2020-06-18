@@ -2,8 +2,10 @@ import React, { Component } from 'react'
 import { MdKeyboardVoice } from "react-icons/md";
 import './Login.scss'
 import Http from '../../../../component/Http';
+import { connect } from 'react-redux'
 import LoginWithVoice from './LoginWithVoice';
-export default class Login extends Component {
+import { login } from '../../../../redux/reducer'
+class Login extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -61,8 +63,14 @@ export default class Login extends Component {
     handleCheckSuccess = (state) => {
         this.setState({loginstate : state})
     }
+    onSubmit = (e) => {
+        e.preventDefault();
+        let { id, password } =this.state;
+        this.props.login(id, password);
+    }
     render() {
         const { loginWithVoice, id, password } = this.state;
+        const { isLoginPending, isLoginSuccess , loginError } = this.props;
         return (
             <div className="container-fluid">
                 <div className="row justify-content-center">
@@ -89,10 +97,28 @@ export default class Login extends Component {
                                     handleCheckSuccess =  {this.handleCheckSuccess}
                                 />
                         }
-                        <button type="submit" className="btn btn-block" onClick = {this.handleLogin}>로그인</button>
+                        { isLoginPending &&  <div className ="spinner-border text-primary d-flex" style = {{margin: '0 auto'}}></div>}
+                        { loginError &&  <div style = {{margin: '0 auto'}}>아이디를 틀렸습니다. 확인해주세요</div>}
+
+                        <button type="submit" className="btn btn-block" onClick = {this.onSubmit}>로그인</button>
                     </div>
                 </div>
             </div>
         )
     }
 }
+
+const mapStateToProps = (state) => {
+    return {
+        isLoginPending: state.isLoginPending,
+        isLoginSuccess: state.isLoginSuccess,
+        loginError: state.loginError
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        login: (id, password) => dispatch(login(id, password))
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
