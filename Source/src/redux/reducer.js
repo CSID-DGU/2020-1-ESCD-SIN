@@ -1,4 +1,5 @@
 import Promise from 'es6-promise'
+import Http from '../component/Http';
 
 const LOGIN_PENDING = 'LOGIN_PENDING';
 const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
@@ -65,13 +66,31 @@ export default function reducer(initstate = {
             return initstate;
     }
 }
-function sendLoginRequest( email, password){
+function sendLoginRequest( id, password){
     return new Promise((resolve, reject) => {
-        if( email = "check" && password == "checkp")
-        {
-            return resolve(true)
-        }else{
-            return reject(new Error('Invailid email of password'))
-        }
+        if(id && password){
+                Http.post({
+                    path: '/loginwithnovoice',
+                    payload: {
+                        'username': id, password
+                    }
+                }).then(({data}) => {
+                    const { message } = data;
+                    if(message === 'fail')
+                    {
+                        return reject(new Error("아이디 틀렸습니다"));
+                    }else{
+                        const { id, user_id,email, isvoice, money } = data.user;
+                        const user = {id, user_id, email, isvoice, money};
+                        localStorage.setItem("user", JSON.stringify(user))
+                        // alert("로그인 성공했습니다");
+                    }
+                    return resolve(true);
+                }).catch(err =>
+                    console.log(err)    
+                )
+            }else{
+                return reject(new Error("아이디 틀렸습니다"));
+            }
     });
 }

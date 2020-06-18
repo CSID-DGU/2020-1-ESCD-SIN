@@ -5,6 +5,7 @@ import Http from '../../../../component/Http';
 import { connect } from 'react-redux'
 import LoginWithVoice from './LoginWithVoice';
 import { login } from '../../../../redux/reducer'
+import { withRouter } from 'react-router-dom';
 class Login extends Component {
     constructor(props) {
         super(props)
@@ -27,50 +28,61 @@ class Login extends Component {
             [name] : value
         })
     }
-    handleLogin = () => {
-        const { loginstate } = this.state;
-        if(loginstate){ //음성 인식을 성공하여 서비스 페이지를 이동함
-            this.props.history.push(`/service`);
-        }else{ //Login with text and password
-            const { id, password }  = this.state;
-            if(id && password){
-                Http.post({
-                    path: '/loginwithnovoice',
-                    payload: {
-                        'username': id, password
-                    }
-                }).then(({data}) => {
-                    const { message } = data;
-                    if(message === 'fail')
-                    {
-                        alert("아이디를 틀렸습니다. 확인해주세요")
-                    }else{
-                        const { id, user_id,email, isvoice, money } = data.user;
-                        const user = {id, user_id, email, isvoice, money};
-                        localStorage.setItem("user", JSON.stringify(user))
-                        alert("로그인 성공했습니다");
-                        this.props.history.push(`/service`);
-                    }
-                }).catch(err =>
-                    console.log(err)    
-                )
-            }else{
-                alert("입력한 정보를 다시 확인해주세요.")
-            }
-        }
-    }
+    
+    // handleLogin = () => {
+    //     const { loginstate } = this.state;
+    //     if(loginstate){ //음성 인식을 성공하여 서비스 페이지를 이동함
+    //         this.props.history.push(`/service`);
+    //     }else{ //Login with text and password
+    //         const { id, password }  = this.state;
+    //         if(id && password){
+    //             Http.post({
+    //                 path: '/loginwithnovoice',
+    //                 payload: {
+    //                     'username': id, password
+    //                 }
+    //             }).then(({data}) => {
+    //                 const { message } = data;
+    //                 if(message === 'fail')
+    //                 {
+    //                     alert("아이디를 틀렸습니다. 확인해주세요")
+    //                 }else{
+    //                     const { id, user_id,email, isvoice, money } = data.user;
+    //                     const user = {id, user_id, email, isvoice, money};
+    //                     localStorage.setItem("user", JSON.stringify(user))
+    //                     alert("로그인 성공했습니다");
+    //                     this.props.history.push(`/service`);
+    //                 }
+    //             }).catch(err =>
+    //                 console.log(err)    
+    //             )
+    //         }else{
+    //             alert("입력한 정보를 다시 확인해주세요.")
+    //         }
+    //     }
+    // }
     
     handleCheckSuccess = (state) => {
         this.setState({loginstate : state})
     }
     onSubmit = (e) => {
         e.preventDefault();
-        let { id, password } =this.state;
-        this.props.login(id, password);
+        const { loginstate } = this.state;
+        if(loginstate)
+        {
+            this.props.history.push(`/service`);
+        }else{
+            let { id, password } = this.state;
+            this.props.login(id, password);
+        }
     }
     render() {
         const { loginWithVoice, id, password } = this.state;
         const { isLoginPending, isLoginSuccess , loginError } = this.props;
+        if(isLoginSuccess)
+        {
+            this.props.history.push(`/service`);
+        }
         return (
             <div className="container-fluid">
                 <div className="row justify-content-center">
@@ -121,4 +133,4 @@ const mapDispatchToProps = (dispatch) => {
         login: (id, password) => dispatch(login(id, password))
     }
 }
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Login));
