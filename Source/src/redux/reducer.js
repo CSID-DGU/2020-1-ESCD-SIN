@@ -83,6 +83,7 @@ function sendLoginRequest( id, password){
                         const { id, user_id,email, isvoice, money } = data.user;
                         const user = {id, user_id, email, isvoice, money};
                         localStorage.setItem("user", JSON.stringify(user))
+                        // this.props.history.push(`/service`);
                         // alert("로그인 성공했습니다");
                     }
                     return resolve(true);

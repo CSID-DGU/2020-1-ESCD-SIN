@@ -1,13 +1,21 @@
-import React, { useState } from 'react'
+import React, { useState, Component } from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
+import { login } from '../../redux/reducer'
+class Header extends Component {
+    constructor(props){
+        super(props)
+    }
 
-function Header(props) {
-    const [user, setUser] = useState({});
-
-    return (
-        <HeaderWarapper className="navbar navbar-expand-lg px-sm-5">
+    logOut = () =>{
+        window.location.replace("http://localhost:3000");
+        localStorage.clear();
+    }
+    render() {
+        return(
+            <HeaderWarapper className="navbar navbar-expand-lg px-sm-5">
             <Link to="/">
                 <img src="https://media-exp1.licdn.com/dms/image/C4E0BAQHMfiIlfjYpkQ/company-logo_200_200/0?e=2159024400&v=beta&t=rNdA57yGa_S9fw81aTbRbLMdvmVOcTfdwQ4aeKfVL2c" 
                 />
@@ -35,16 +43,31 @@ function Header(props) {
                 </li>
             </ul>
             <div className="ml-auto">
-                <Link to = "/login" className="ml-2" style = {{
-                    padding: "10px",
-                    paddingLeft: "20px",
-                    paddingRight: "20px",
-                }} >
-                        <span className="mr-2">
-                            <i className="fa fa-user"/>
-                        </span>
-                        Login
-                </Link>
+                {
+                    !localStorage.getItem('user') ?
+                        <Link to = "/login" className="ml-2" style = {{
+                            padding: "10px",
+                            paddingLeft: "20px",
+                            paddingRight: "20px",
+                        }} >
+                                <span className="mr-2">
+                                    <i className="fa fa-user"/>
+                                </span>
+                                Login
+                        </Link>
+                    :   
+                    <>
+                        <spann style = {{color:"white"}}> Welcome {JSON.parse(localStorage.getItem('user')).user_id}</spann>
+                        <Link onClick = {this.logOut}
+                            style = {{
+                                padding: "10px",
+                                paddingLeft: "20px",
+                                paddingRight: "20px",
+                            }}
+                        >Logout</Link>
+                        </>
+
+                }
                 <Link to = "/join" className="" style = {{
                     background: "blue",
                     padding: "10px",
@@ -59,11 +82,10 @@ function Header(props) {
                 </Link>
             </div>
         </HeaderWarapper>
-    )
+        )    
+    }
 }
-Header.propTypes = {
 
-}
 const HeaderWarapper = styled.div`
     background: var(--mainBlue);
     height: 150px;
@@ -75,5 +97,17 @@ const HeaderWarapper = styled.div`
         color: var(--mainWhite)
     }
 `
-export default Header
+const mapStateToProps = (state) => {
+    return {
+        isLoginPending: state.isLoginPending,
+        isLoginSuccess: state.isLoginSuccess,
+        loginError: state.loginError
+    }
+}
 
+const mapDispatchToProps = (dispatch) => {
+    return {
+        login: (id, password) => dispatch(login(id, password))
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

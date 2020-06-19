@@ -28,7 +28,7 @@ class Login extends Component {
             [name] : value
         })
     }
-    
+
     // handleLogin = () => {
     //     const { loginstate } = this.state;
     //     if(loginstate){ //음성 인식을 성공하여 서비스 페이지를 이동함
@@ -61,7 +61,6 @@ class Login extends Component {
     //         }
     //     }
     // }
-    
     handleCheckSuccess = (state) => {
         this.setState({loginstate : state})
     }
