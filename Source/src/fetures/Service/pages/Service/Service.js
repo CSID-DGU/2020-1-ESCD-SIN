@@ -45,20 +45,22 @@ export default class Service extends Component {
                         </div>
                     </div>
                 </div>
-                <SendMoney />
-                <div id="account" className="col-md-6 col-md-offset-3">
-                    <div className="panel panel-default">
-                        <div className="panel-heading text-center lead">Your Account</div>
-                        <div className="panel-body">
-                            <div className="form-group">
-                                <label htmlFor="initial-deposit">My ID</label>
+                <div className="row">
+                    <SendMoney />
+                    <div id="account" className="col-md-6">
+                        <div className="panel panel-default">
+                            <div className="panel-heading text-center lead">Your Account</div>
+                            <div className="panel-body">
+                                <div className="form-group">
+                                    <label htmlFor="initial-deposit">My ID</label>
+                                        <div className="input-group">
+                                            {this.state.id}
+                                        </div>
+                                    <label htmlFor="initial-deposit">잔액</label>
                                     <div className="input-group">
-                                        {this.state.id}
+                                        <div className="input-group-addon">WON</div>
+                                        <input type="text" min="0" name="initial-deposit" id="initial-deposit" className="form-control" autoFocus required  value = {this.state.myMoney}/>
                                     </div>
-                                <label htmlFor="initial-deposit">잔액</label>
-                                <div className="input-group">
-                                    <div className="input-group-addon">WON</div>
-                                    <input type="text" min="0" name="initial-deposit" id="initial-deposit" className="form-control" autoFocus required  value = {this.state.myMoney}/>
                                 </div>
                             </div>
                         </div>

@@ -84,8 +84,7 @@ export default class SendMoney extends Component {
     render() {
         const { checkLoading, resultCheck, enableUser, receiveUser, sendMoney } = this.state
         return (
-            <SendMoneyDiv className="row">
-                <div id="bank" className="col-md-6 col-md-offset-3">
+                <SendMoneyDiv id="bank" className="col-md-6">
                     <div className="panel panel-default">
                     <div className="panel-heading text-center lead">Bank Account:</div>
                         <div className="panel-body">
@@ -138,8 +137,7 @@ export default class SendMoney extends Component {
                             </form>
                         </div>
                     </div>
-                </div>
-        </SendMoneyDiv>
+            </SendMoneyDiv>
         )
     }
 }
