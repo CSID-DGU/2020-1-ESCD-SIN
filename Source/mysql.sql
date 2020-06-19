@@ -19,18 +19,22 @@
 -- Table structure for table `history`
 --
 
+CREATE DATABASE voice_db;
+use voice_db;
+
 DROP TABLE IF EXISTS `history`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `history` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `send_user` int NOT NULL,
-  `receive_user` int NOT NULL,
-  `bank` varchar(45) DEFAULT NULL,
+  `send_user` varchar(45) NOT NULL,
+  `receive_user` varchar(45) NOT NULL,
+  `send_bank` varchar(45) DEFAULT NULL,
+  `receive_bank` varchar(45) DEFAULT NULL,
   `money` varchar(45) NOT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,7 +43,7 @@ CREATE TABLE `history` (
 
 LOCK TABLES `history` WRITE;
 /*!40000 ALTER TABLE `history` DISABLE KEYS */;
-INSERT INTO `history` VALUES (15,11,12,'농합 은행','1000','2020-06-10 08:49:27');
+INSERT INTO `history` VALUES (31,'huong2','huong','우리 은행','신한 은행','2000','2020-06-19 12:13:38');
 /*!40000 ALTER TABLE `history` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -62,7 +66,7 @@ CREATE TABLE `users` (
   `money` float DEFAULT '0',
   `bank` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=118 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=132 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,7 +75,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (116,'11','gUhd9TxpnQppnZVAf7cv9ldWuji3s/46QUkIWGSmDhA=','dongguk@gmail.com','2020-06-09 11:12:08','qwe','aiadKt5aAzoU9bXTerSwuy2GVKsz4b1eQGx0vCXfE4.gmm',0,100000,'신한 은행'),(117,'12','qwe','qwe','2020-06-09 11:12:08','qwe','qe',0,8423,'농합 은행');
+INSERT INTO `users` VALUES (130,'huong','gUhd9TxpnQppnZVAf7cv9ldWuji3s/46QUkIWGSmDhA=','user@gmail.com','2020-06-18 09:24:59',NULL,NULL,0,156712,'신한 은행'),(131,'huong2','gUhd9TxpnQppnZVAf7cv9ldWuji3s/46QUkIWGSmDhA=','user@gmail.com','2020-06-18 09:25:42',NULL,NULL,0,98000,'우리 은행');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -84,4 +88,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-06-10 17:54:30
+-- Dump completed on 2020-06-19 21:18:13
