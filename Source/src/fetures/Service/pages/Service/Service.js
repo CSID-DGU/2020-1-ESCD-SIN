@@ -33,6 +33,21 @@ export default class Service extends Component {
             console.log(err)
         })
     }
+    sendMoney = (money) => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const { id, user_id } = user;
+        Http.get({
+            path: `/getmoney/${id}`,
+        }).then(({data}) => {
+            this.setState({
+                myMoney: data.data.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,'),
+            })
+        }).catch(err => {
+            alert("서버 연결 실패합니다. 다시 확인해주세요.")
+            console.log(err)
+        })
+    }
+ 
     render() {
         return (
             <div className="container">
@@ -46,7 +61,9 @@ export default class Service extends Component {
                     </div>
                 </div>
                 <div className="row">
-                    <SendMoney />
+                    <SendMoney 
+                        sendMoneyChange = {(money) => this.sendMoney(money)}
+                    />
                     <div id="account" className="col-md-6">
                         <div className="panel panel-default">
                             <div className="panel-heading text-center lead">Your Account</div>
@@ -68,7 +85,9 @@ export default class Service extends Component {
                 </div>
                 <div id="account" className="row">
                     <div className="col-md-12">
-                        <AccountHistory />
+                        <AccountHistory
+                            loadAccoutHistory = {this.state.myMoney}
+                        />
                     </div>
                 </div>
             </div>

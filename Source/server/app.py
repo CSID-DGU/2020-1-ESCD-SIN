@@ -469,7 +469,6 @@ def gethistory(id=None):
     if request.method == 'GET':
         history_sender = db.sqlSelect("SELECT * FROM history where send_user = %s",(id))
         history_receive = db.sqlSelect("SELECT * FROM history where receive_user = %s",(id))
-        print(history_receive)
         try:
             auth_history = {
                 'message': 'pass',
@@ -524,12 +523,21 @@ def sendmoney():
         send_user = data['sendUser']
         receive_user = data['receiveUser']
         send_money = data['money']
-        receive_user_bank = data['receiveUserBank']
+        receive_bank = data['receiveUserBank'] #receive bak
+
+        send_user_object = db.sqlSelect("SELECT * FROM users where user_id = %s",(send_user))[0] #get send bank
         try:
-            db.sql("INSERT INTO history (send_user, receive_user, money, bank) VALUES (%s, %s, %s, %s)",(send_user, receive_user, send_money, receive_user_bank))
+            #insert to history
+            db.sql("INSERT INTO history (send_user, receive_user, money, receive_bank,send_bank) VALUES (%s, %s, %s, %s, %s)",(send_user, receive_user, send_money, receive_bank,send_user_object[9]))
             user = db.sqlSelect("SELECT * FROM users where user_id = %s",(receive_user))
+
+            #updata money for receiver
             money = float(user[0][8]) + float(send_money)
             db.sql("UPDATE users SET money = %s WHERE user_id = %s",(money, receive_user))
+
+            #updata money for sender
+            money = float(send_user_object[8]) - float(send_money)
+            db.sql("UPDATE users SET money = %s WHERE user_id = %s",(money, send_user))
             return "pass"
         except ValueError as error:
             return "fail"

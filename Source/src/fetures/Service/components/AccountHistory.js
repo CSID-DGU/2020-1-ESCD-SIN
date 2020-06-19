@@ -14,8 +14,6 @@ function AccountHistory(props) {
             path: `/history/${user_id}`
         }).then(({data}) => {
             const { send, receive } = data.data;
-            console.log(send, receive)
-            console.log( data)
             if(send != null)
             {
                 setSended(send)
@@ -27,7 +25,7 @@ function AccountHistory(props) {
         }).catch(err => {
             console.log(err)
         })
-    }, [])
+    }, [props.loadAccoutHistory])
     return (
         <AccountHistoryDiv className="panel panel-info" id="history-panel">
             <div className="panel-heading text-center lead" id="history-header">Account History</div>
@@ -51,10 +49,9 @@ function AccountHistory(props) {
                                             <tr key = {index}>
                                                 <th>{index + 1}</th>
                                                 <th>{item[2]}</th>
-                                                <th>{parseInt(item[4]).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</th>
-                                                <th>{item[3]}</th>
-                                                <th>{item[5]}</th>
-                                            
+                                                <th>{parseInt(item[5]).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</th>
+                                                <th>{item[4]}</th>
+                                                <th>{item[6]}</th>
                                             </tr>
                                         )
                                     })
@@ -86,7 +83,6 @@ function AccountHistory(props) {
                                                 <th>{parseInt(item[4]).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</th>
                                                 <th>{item[3]}</th>
                                                 <th>{item[5]}</th>
-                                            
                                             </tr>
                                         )
                                     })

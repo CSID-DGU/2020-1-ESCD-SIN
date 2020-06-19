@@ -75,6 +75,9 @@ export default class SendMoney extends Component {
                     enableUser: !this.state.enableUser,
                     resultCheck: []
                 })
+                const { sendMoneyChange, loadHistory } = this.props
+                sendMoneyChange(sendMoney);
+                loadHistory();
                 alert("돈을 보냈습니다");
             }
         }).catch(err => {
