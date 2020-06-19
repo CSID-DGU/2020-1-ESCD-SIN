@@ -467,18 +467,29 @@ def getmony(id=None):
 @app.route("/history/<id>", methods=['GET'])
 def gethistory(id=None):
     if request.method == 'GET':
-        history = db.sqlSelect("SELECT * FROM history where send_user = %s",(id))
-        if(len(history) != 0):
+        history_sender = db.sqlSelect("SELECT * FROM history where send_user = %s",(id))
+        history_receive = db.sqlSelect("SELECT * FROM history where receive_user = %s",(id))
+        print(history_receive)
+        try:
             auth_history = {
                 'message': 'pass',
-                'data': history
+                'data': {
+                    'send': history_sender,
+                    'receive': history_receive
+                }
             }
-        else :
+            return auth_history
+        except ValueError as Error:
+            print(Error)
             auth_history = {
-                'message': 'fail',
-                'data': []
+                'message': 'Error',
+                'data': {
+                    'send': [],
+                    'receive': []
+                }
             }
-        return auth_history
+            return auth_history
+
     else:
         pass
 

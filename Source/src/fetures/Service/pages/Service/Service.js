@@ -66,8 +66,10 @@ export default class Service extends Component {
                         </div>
                     </div>
                 </div>
-                <div id="account" className="col-md-6 col-md-offset-3">
-                    <AccountHistory />
+                <div id="account" className="row">
+                    <div className="col-md-12">
+                        <AccountHistory />
+                    </div>
                 </div>
             </div>
         )
