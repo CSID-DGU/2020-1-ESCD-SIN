@@ -81,7 +81,7 @@
 
 ## 4. 데모
 
-### 기초 페이지 화면
+### 시작 화면
 사이티를 접속하면 처음에 사용자에게 먼저 출력하는 페이지 입니다.설명 필요?
 ![MainPage](https://user-images.githubusercontent.com/48276512/84485873-8d7dcf00-acd7-11ea-9953-d2af0a2d506f.PNG)
 
