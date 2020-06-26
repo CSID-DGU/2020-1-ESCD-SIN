@@ -53,7 +53,7 @@ class Header extends Component {
                                 <span className="mr-2">
                                     <i className="fa fa-user"/>
                                 </span>
-                                Login
+                                로그인
                         </Link>
                     :   
                     <>
@@ -64,21 +64,21 @@ class Header extends Component {
                                 paddingLeft: "20px",
                                 paddingRight: "20px",
                             }}
-                        >Logout</Link>
+                        >로그아웃</Link>
                         </>
 
                 }
                 <Link to = "/join" className="" style = {{
-                    background: "blue",
+                    background: "orange",
                     padding: "10px",
                     paddingLeft: "20px",
                     paddingRight: "20px",
-                    
+                    color: "black"
                 }}>
                         <span className="mr-2">
                             <i className="fa fa-registered"/>
                         </span>
-                        Join
+                        회원 가입
                 </Link>
             </div>
         </HeaderWarapper>

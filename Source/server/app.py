@@ -208,7 +208,7 @@ def auth():
         # Model 저장하는 경로
         # user_directory = 'Models/wav/'
         username = data['username']
-        user = db.sqlSelect("SELECT * FROM users where user_id = %s",(username))
+        user = db.sqlSelect("SELECT * FROM users where user_id = %s and isvoice = 1",(username))
 
 
         if(len(user) == 0):
@@ -742,7 +742,7 @@ def random_hangeul():
                 "귤","키위","수박","참외","파인애플","안녕하세요","반갑습니다",
                 "오징어","문어","책상","의자","기러기",
                 ]
-    randomText=["모자","모자","모자","모자","모자"]
+    randomText=["모모","모모","모모","모모","모모"]
     textString = []
     for i in range (0,5):
         textString.append(randomText[rand.randint(0,len(randomText)-1)])

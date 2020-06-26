@@ -1,3 +1,5 @@
+
+
 import Promise from 'es6-promise'
 import Http from '../component/Http';
 
@@ -41,6 +43,7 @@ export function login(id, password){
         })
     }
 }
+
 export default function reducer(initstate = {
     isLoginPending: false,
     isLoginSuccess: false,
@@ -88,7 +91,11 @@ function sendLoginRequest( id, password){
                     }
                     return resolve(true);
                 }).catch(err =>
-                    console.log(err)    
+                    {
+                        //! 서버 연결 실패
+                        alert("서버 연결 실패합니다");
+                        console.log(err)    
+                    }
                 )
             }else{
                 return reject(new Error("아이디 틀렸습니다"));

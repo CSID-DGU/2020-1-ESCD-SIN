@@ -77,7 +77,7 @@ class Login extends Component {
     }
     render() {
         const { loginWithVoice, id, password } = this.state;
-        const { isLoginPending, isLoginSuccess , loginError } = this.props;
+        const { isLoginPending, isLoginSuccess , loginError } =  this.props;
         if(isLoginSuccess)
         {
             this.props.history.push(`/service`);

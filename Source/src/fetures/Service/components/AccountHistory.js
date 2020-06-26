@@ -18,7 +18,7 @@ function AccountHistory(props) {
             {
                 setSended(send)
             }
-            if(receive !== null)
+            if(receive === null)
             {
                 setReceived(receive)
             }
@@ -36,8 +36,8 @@ function AccountHistory(props) {
                         <thead>
                             <tr>
                                 <th>번호</th>
-                                <th>입금 계좌</th>
-                                <th>입금 금액</th>
+                                <th>이체 계좌</th>
+                                <th>이체 금액</th>
                                 <th>은행</th>
                                 <th>날짜</th>
                             </tr>
@@ -80,9 +80,9 @@ function AccountHistory(props) {
                                             <tr key = {index}>
                                                 <th>{index + 1}</th>
                                                 <th>{item[1]}</th>
-                                                <th>{parseInt(item[4]).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</th>
+                                                <th>{parseInt(item[5]).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</th>
                                                 <th>{item[3]}</th>
-                                                <th>{item[5]}</th>
+                                                <th>{item[6]}</th>
                                             </tr>
                                         )
                                     })

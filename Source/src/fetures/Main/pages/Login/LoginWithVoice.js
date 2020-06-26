@@ -36,7 +36,7 @@ export default class LoginWithVoice extends Component {
             if(data === 'User exist')
                 this.setState({checkId: false})
             else{
-                alert("입력한 사용자가 존재하지 않습니다. 다시 확인해주세요")
+                alert("입력한 사용자가 존재하지 않 또는 로그인 인신 기능을 추가하지 않습니다. 다시 확인해주세요")
             }
         }).catch((err) => {
             console.log(err)

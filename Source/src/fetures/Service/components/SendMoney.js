@@ -23,9 +23,17 @@ export default class SendMoney extends Component {
     }
     handleChangeCheck = (e) => {
         e.preventDefault();
-        this.setState({checkLoading : !this.state.checkLoading})
-
         const { receiveUser, bankName} = this.state
+        const user = JSON.parse(localStorage.getItem('user'));
+        
+        if(user.user_id === receiveUser)
+        {
+            
+            alert("자기 계죄를 입금할 수 없습니다.")
+            return;
+        }
+        
+        this.setState({checkLoading : !this.state.checkLoading})
         Http.post({
             path: `/checkuser`,
             payload: {
@@ -59,6 +67,14 @@ export default class SendMoney extends Component {
         e.preventDefault();
         const { receiveUser, sendMoney} = this.state;
         const user = JSON.parse(localStorage.getItem('user'));
+        console.log(user, receiveUser)
+        
+
+        if(user.id === receiveUser)
+        {
+            alert("자기 계죄를 입금할 수 없습니다.")
+            return;
+        }
         Http.post({
             path: `/sendmoney`,
             payload: {

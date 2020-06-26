@@ -5,7 +5,7 @@ class Http{
     //!Default path
     constructor() {
         this.service = axios.create({ //Create custom instace default
-            baseURL: `http://localhost:5000` //proces.env.PYTHON_API_SERVER
+            baseURL: `http://210.94.194.70:5000/` //procces.env.PYTHON_API_SERVER
         })
         this.service.interceptors.response.use(res => res, this.errorHandler);
     }
