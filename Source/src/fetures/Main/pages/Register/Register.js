@@ -43,23 +43,23 @@ export default class Register extends Component {
                 }).then(res => {
                     const { data } = res;
                     if(data === "pass"){
-                        alert("회원가입 성곡했습니다")
+                        alert("회원가입에 성공하였습니다")
                         this.props.history.push('/')
                     }
                     else
-                        alert("이미 존재 사용자입니다. 정보를 다시 입력해주세요.")
+                        alert("이미 존재하는 사용자입니다. 정보를 다시 입력해주세요.")
                 }).catch(err => {
                     console.log(err)
                 })
             }else{
-                alert("빈 값을 입력헀습니다. 다시 확인해주세요")
+                alert("빈 값을 입력헀습니다. 다시 확인해주세요.")
             }
         }else{
             if(finishVoice){
-                alert("회원가입 성공했습니다")
+                alert("회원가입에 성공하였습니다")
                 this.props.history.push('/')
             }else{
-                alert("음성 정보를 각 단계를 먼저 진행해주세요")
+                alert("음성 인식의 각 단계를 먼저 진행해주세요.")
             }
         }
     }
@@ -102,13 +102,13 @@ export default class Register extends Component {
                             console.log(err)
                         })
                     }else{
-                        alert("사용자 이미 존재합니다. 다시 입력해주세요")
+                        alert("사용자가 이미 존재합니다. 다시 입력해주세요")
                     }
                 }).catch((err) => {
                     console.log(err)
                 })   
             }else{
-                alert("음석 인식을 하기 위해서 먼저 위에 정보를 입력해주세요");
+                alert("음성 인식을 하기 위해서 먼저 위에 정보를 입력해주세요");
             }
             return;
         }else{
@@ -133,7 +133,7 @@ export default class Register extends Component {
                             finishVoice: !this.state.finishVoice
                         })
                     }else{
-                        alert("단어가 음성 인식을 실패했습니다 다시 해주세요")
+                        alert("음성 인식 단어가 일치하지 않습니다. 다시 해주세요")
                     }
                 }).catch((err) => {
                     console.log(err)
@@ -145,7 +145,7 @@ export default class Register extends Component {
                     const { data } = res
                     if(data === "User has been successfully enrolled ...!!")
                     {
-                        alert("음석 인식 인증 기능을 추가되었습니다.")
+                        alert("음성 인식 인증 기능이 추가되었습니다.")
                     }
                 }).catch((err) => {
                     console.log(err)
@@ -179,7 +179,7 @@ export default class Register extends Component {
                                 {
                                     confirmPassword &&
                                         password !== confirmPassword ?
-                                            <p style={{color: "red"}}>비밀번호 동일하지 않습니다</p>
+                                            <p style={{color: "red"}}>비밀번호가 동일하지 않습니다</p>
                                         : ""
                                 }
                             </div>
@@ -219,14 +219,14 @@ export default class Register extends Component {
                                     <>
                                         {
                                             !checkNoise && 
-                                            "노이즈 체그 단계입니다"
+                                            "노이즈 체크 단계입니다"
                                         }
                                         <WaveSurferContainer
                                             hanleChangeVoice = {this.hanleChangeVoice}
                                         />
                                         {
                                             finishVoice && 
-                                                <p className="text-center">마지막으로 버튼을 한번 누려주세요</p>
+                                                <p className="text-center">마지막으로 버튼을 한번 눌러주세요</p>
                                         }
                                     </>
                                 }
