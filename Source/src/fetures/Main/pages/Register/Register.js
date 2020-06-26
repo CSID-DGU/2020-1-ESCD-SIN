@@ -70,7 +70,7 @@ export default class Register extends Component {
         {
             if(id && email && password && confirmPassword){
                 if(password !== confirmPassword){
-                    alert("입력된 비밀번호를 확인 해주세요")
+                    alert("입력된 비밀번호를 확인 해주세요.")
                     return;
                 }
                 //입력한 정보를 각 User 저장할 파일을 경로를 만듦
