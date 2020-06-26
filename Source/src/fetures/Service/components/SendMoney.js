@@ -121,7 +121,7 @@ export default class SendMoney extends Component {
                                 
                                 {
                                     enableUser ?
-                                    <button type="submit" className="btn btn-primary" onClick = {e => this.handleSend(e)}>보내</button> :
+                                    <button type="submit" className="btn btn-primary" onClick = {e => this.handleSend(e)}>보내기</button> :
                                     <button type="submit" className="btn btn-primary" onClick = {e => this.handleChangeCheck(e)}>확인</button>
                                 }
                                 {
