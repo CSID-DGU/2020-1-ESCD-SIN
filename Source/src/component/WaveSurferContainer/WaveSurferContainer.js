@@ -87,7 +87,7 @@ class WaveSurferContainer extends React.Component {
                     <button onClick={() => this.handlePlay()}>
                         {this.state.playing ? <i className="microphone icon"></i> :  <i className="microphone slash icon"></i>}
                     </button>
-                    <button className="btn btn-primary" onClick={() => this.handleCheckVoice()}>음석 데이터 보내</button>
+                    <button className="btn btn-primary" onClick={() => this.handleCheckVoice()}>음성 데이터 보내기</button>
             </div>
         );
     }

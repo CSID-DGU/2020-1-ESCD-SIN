@@ -23,7 +23,7 @@ export default class LoginWithVoice extends Component {
         const { id } =  this.state;
         if(!id)
         {
-            alert("ID 입력해주세요");
+            alert("ID를 입력해주세요");
             return;
         }
         Http.post({
@@ -106,10 +106,10 @@ export default class LoginWithVoice extends Component {
                         const { id, user_id,email, isvoice, money } = data.user;
                         const user = {id, user_id, email, isvoice, money};
                         localStorage.setItem("user", JSON.stringify(user))
-                        alert("음석 인식 인증 기능을 확인했습니다")
+                        alert("음성 인식 인증 기능을 확인했습니다")
                         handleCheckSuccess(true);
                     }else{
-                        alert("사용자 인식 실패합니다.")
+                        alert("사용자 인식에 실패하였습니다.")
                         handleCheckSuccess(false);
                     }
                 }).catch((err) => {
@@ -149,14 +149,14 @@ export default class LoginWithVoice extends Component {
                     <>
                         {
                             !checkNoise && 
-                            "노이즈 체그 단계입니다"
+                            "노이즈 체크 단계입니다"
                         }
                         <WaveSurferContainer 
                             hanleChangeVoice = {this.hanleChangeVoice}
                         />
                         {
                             finishVoice && 
-                                <p className="text-center">마지막으로 버튼을 한번 누려주세요</p>
+                                <p className="text-center">마지막으로 버튼을 한번 눌러주세요</p>
                         }
                     </>
                         

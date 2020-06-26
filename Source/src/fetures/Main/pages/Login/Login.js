@@ -109,7 +109,7 @@ class Login extends Component {
                                 />
                         }
                         { isLoginPending &&  <div className ="spinner-border text-primary d-flex" style = {{margin: '0 auto'}}></div>}
-                        { loginError &&  <div style = {{margin: '0 auto'}}>아이디를 틀렸습니다. 확인해주세요</div>}
+                        { loginError &&  <div style = {{margin: '0 auto'}}>아이디가 틀렸습니다. 확인해주세요</div>}
 
                         <button type="submit" className="btn btn-block" onClick = {this.onSubmit}>로그인</button>
                     </div>
