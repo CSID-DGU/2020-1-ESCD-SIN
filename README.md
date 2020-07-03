@@ -109,7 +109,7 @@
 
 
 ## 프로젝트 설계 발표 링크
-https://youtu.be/eum-ErPIMT0 
+https://www.youtube.com/watch?v=4gKVdE_yVrc
 
 ## 팀원 
 2014112081 정세인
