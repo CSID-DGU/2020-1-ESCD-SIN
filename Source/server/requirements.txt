@@ -37,7 +37,7 @@ mongoengine==0.20.0
 motor==2.1.0
 mysql-connector-python==8.0.20
 Naked==0.1.31
-numpy==1.18.4
+numpy==1.22.0
 protobuf==3.12.2
 psycopg2==2.8.5
 pyasn1==0.4.8
